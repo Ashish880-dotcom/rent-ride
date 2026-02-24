@@ -1,0 +1,532 @@
+# Implementation Plan: RentRide Vehicle Rental System
+
+## Overview
+
+This implementation plan breaks down the RentRide vehicle rental system into sequential, manageable tasks. The system will be built using Next.js 16 App Router, TypeScript, Prisma ORM, PostgreSQL, NextAuth, and TailwindCSS. The implementation follows a feature-first architecture with role-based access control.
+
+## Tasks
+
+- [x] 1. Database schema setup and migrations
+  - [x] 1.1 Create Prisma schema with all models (User, KYC, Vehicle, Booking, Feedback)
+    - Define all enums (Role, KYCStatus, VehicleStatus, BookingStatus)
+    - Set up model relationships and foreign keys
+    - Add indexes for performance optimization
+    - Configure Prisma client output path to src/generated/prisma
+    - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6_
+  - [x] 1.2 Generate Prisma client and run initial migration
+    - Run `npx prisma generate` to create TypeScript client
+    - Run `npx prisma migrate dev --name init` to create database tables
+    - Verify database schema matches design specifications
+    - _Requirements: 14.1, 14.2_
+
+- [x] 2. Core authentication infrastructure
+  - [x] 2.1 Set up NextAuth configuration
+    - Create auth configuration in src/core/lib/auth.ts
+    - Configure CredentialsProvider with email/password
+    - Set up JWT strategy for session management
+    - Add custom callbacks for role and KYC status in token/session
+    - Configure sign-in page redirect to /login
+    - _Requirements: 1.4, 1.5_
+  - [x] 2.2 Create authentication API route handler
+    - Create app/api/auth/[...nextauth]/route.ts
+    - Export NextAuth handlers (GET, POST)
+    - _Requirements: 1.4_
+  - [x] 2.3 Implement user registration service
+    - Create src/features/authentication/services/authService.ts
+    - Implement register function with password hashing using bcryptjs
+    - Validate email format and password strength
+    - Create user record in database with hashed password
+    - _Requirements: 1.1, 1.2, 1.6, 17.1_
+  - [x] 2.4 Create registration API route
+    - Create app/api/auth/register/route.ts
+    - Validate request body using Zod schema
+    - Call authService.register with email, password, role
+    - Return user data (excluding password hash)
+    - Handle duplicate email errors
+    - _Requirements: 1.1, 1.2, 17.2_
+
+- [x] 3. Middleware for role-based access control
+  - [x] 3.1 Implement authentication and authorization middleware
+    - Create src/middleware.ts
+    - Check for valid session using NextAuth auth()
+    - Redirect unauthenticated users to /login
+    - Implement role-based route protection logic
+    - Protect admin routes (ADMIN only)
+    - Protect owner routes (OWNER and ADMIN)
+    - Protect booking routes with KYC requirement
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
+  - [x] 3.2 Configure middleware matcher patterns
+    - Add matcher config for protected routes
+    - Include /admin/_, /owner/_, /renter/_, /api/_ patterns
+    - Exclude public routes (/login, /register, /api/auth/\*)
+    - _Requirements: 2.1, 2.2_
+
+- [x] 4. Authentication UI components
+  - [x] 4.1 Create login page and form component
+    - Create app/(auth)/login/page.tsx
+    - Create src/features/authentication/components/LoginForm.tsx
+    - Implement form with email and password inputs
+    - Call NextAuth signIn on form submission
+    - Display error messages for failed login
+    - Redirect to appropriate dashboard based on role after login
+    - _Requirements: 1.3, 16.5_
+  - [x] 4.2 Create registration page and form component
+    - Create app/(auth)/register/page.tsx
+    - Create src/features/authentication/components/RegisterForm.tsx
+    - Implement form with email, password, and role selection
+    - Call /api/auth/register endpoint
+    - Display validation errors
+    - Redirect to login page after successful registration
+    - _Requirements: 1.1, 16.5_
+
+- [x] 5. KYC submission and verification system
+  - [x] 5.1 Create KYC service layer
+    - Create src/features/kyc/services/kycService.ts
+    - Implement submitKYC function to create KYC record with PENDING status
+    - Implement getUserKYCStatus to check user's KYC approval
+    - Implement getPendingSubmissions for admin view
+    - Implement approveKYC to update status to APPROVED
+    - Implement rejectKYC to update status to REJECTED
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+  - [x] 5.2 Create KYC submission API routes
+    - Create app/api/kyc/route.ts for POST (submit KYC)
+    - Create app/api/kyc/status/route.ts for GET (check status)
+    - Validate request body with Zod schema
+    - Ensure user is authenticated
+    - Return KYC submission data
+    - _Requirements: 3.1, 3.2, 3.3_
+  - [x] 5.3 Create KYC admin review API routes
+    - Create app/api/kyc/pending/route.ts for GET (list pending)
+    - Create app/api/kyc/[id]/approve/route.ts for PATCH
+    - Create app/api/kyc/[id]/reject/route.ts for PATCH
+    - Ensure only ADMIN role can access these routes
+    - _Requirements: 3.4, 3.5, 3.6_
+  - [x] 5.4 Create KYC submission form component
+    - Create src/features/kyc/components/KYCSubmissionForm.tsx
+    - Add fields for fullName, documentType, documentNumber, documentImage
+    - Implement form validation
+    - Call /api/kyc endpoint on submission
+    - Display success/error messages
+    - _Requirements: 3.1, 3.2, 16.5_
+  - [x] 5.5 Create KYC review panel for admin
+    - Create src/features/kyc/components/KYCReviewPanel.tsx
+    - Fetch pending KYC submissions from /api/kyc/pending
+    - Display submission details in table/card format
+    - Add approve/reject action buttons
+    - Update UI after admin action
+    - _Requirements: 3.4, 3.5, 3.6_
+
+- [x] 6. Vehicle listing and management system
+  - [x] 6.1 Create vehicle service layer
+    - Create src/features/vehicles/services/vehicleService.ts
+    - Implement createVehicle with PENDING status
+    - Implement getApprovedVehicles with filtering (location, price range)
+    - Implement getOwnerVehicles to fetch owner's vehicles
+    - Implement getPendingVehicles for admin review
+    - Implement acceptForPayment to update status to AWAITING_PAYMENT
+    - Implement confirmPayment to update status to APPROVED
+    - Implement rejectVehicle to update status to REJECTED
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [x] 6.2 Create vehicle submission API routes
+    - Create app/api/vehicles/route.ts for POST (create vehicle)
+    - Validate user has OWNER role and APPROVED KYC
+    - Validate request body with Zod schema
+    - Call vehicleService.createVehicle
+    - Return created vehicle data
+    - _Requirements: 4.1, 4.2, 4.3, 4.4_
+  - [x] 6.3 Create vehicle browsing API routes
+    - Add GET handler to app/api/vehicles/route.ts
+    - Support query parameters for filtering (location, minPrice, maxPrice, status)
+    - Return only APPROVED vehicles for renters
+    - Return owner's vehicles for OWNER role
+    - Return all vehicles for ADMIN role
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [x] 6.4 Create vehicle details API route
+    - Create app/api/vehicles/[id]/route.ts for GET
+    - Fetch vehicle with related feedback and ratings
+    - Calculate average rating
+    - Return vehicle details with feedback
+    - _Requirements: 6.5, 18.4_
+  - [x] 6.5 Create vehicle admin review API routes
+    - Create app/api/vehicles/[id]/accept-payment/route.ts for PATCH
+    - Create app/api/vehicles/[id]/confirm-payment/route.ts for PATCH
+    - Create app/api/vehicles/[id]/reject/route.ts for PATCH
+    - Ensure only ADMIN role can access
+    - Implement state machine validation for transitions
+    - _Requirements: 5.2, 5.3, 5.4, 5.5_
+  - [x] 6.6 Create vehicle listing form component
+    - Create src/features/vehicles/components/VehicleListingForm.tsx
+    - Add fields for make, model, year, pricePerDay, location, description, images
+    - Implement form validation (year range, positive price)
+    - Call /api/vehicles endpoint on submission
+    - Display success/error messages
+    - _Requirements: 4.3, 16.5_
+  - [x] 6.7 Create vehicle browsing components
+    - Create src/features/vehicles/components/VehicleCard.tsx
+    - Create src/features/vehicles/components/VehicleGrid.tsx
+    - Display vehicle information (make, model, year, price, location)
+    - Add filtering UI (location, price range)
+    - Add search functionality
+    - Implement responsive grid layout
+    - _Requirements: 6.2, 6.3, 6.4, 16.2_
+  - [x] 6.8 Create vehicle review panel for admin
+    - Create src/features/vehicles/components/VehicleReviewPanel.tsx
+    - Fetch pending vehicles from /api/vehicles?status=PENDING
+    - Display vehicle details with images
+    - Add action buttons (accept for payment, reject)
+    - Add payment confirmation button for AWAITING_PAYMENT vehicles
+    - Update UI after admin action
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+
+- [x] 7. Booking request and management system
+  - [x] 7.1 Create booking service layer with conflict detection
+    - Create src/features/bookings/services/bookingService.ts
+    - Implement checkConflicts function using date range overlap logic
+    - Implement createBooking with conflict validation
+    - Calculate totalPrice based on date range and vehicle pricePerDay
+    - Implement getRenterBookings to fetch user's bookings
+    - Implement getOwnerBookings to fetch bookings for owner's vehicles
+    - Implement acceptBooking to update status to CONFIRMED
+    - Implement rejectBooking to update status to REJECTED
+    - Implement completeBooking to update status to COMPLETED (validate endDate passed)
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 8.1, 8.2, 8.3, 8.4, 8.5, 9.1, 9.2, 9.3, 10.1, 10.2_
+  - [ ]\* 7.2 Write unit tests for booking conflict detection
+    - Test overlapping date ranges (start overlap, end overlap, complete overlap)
+    - Test non-overlapping date ranges
+    - Test edge cases (same start/end dates, adjacent bookings)
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+  - [x] 7.3 Create booking submission API routes
+    - Create app/api/bookings/route.ts for POST
+    - Validate user has USER role and APPROVED KYC
+    - Validate request body (vehicleId, startDate, endDate)
+    - Validate startDate < endDate and startDate is in future
+    - Check vehicle has APPROVED status
+    - Call bookingService.checkConflicts
+    - Return conflict error if dates overlap
+    - Create booking with PENDING status
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 8.1, 8.2_
+  - [x] 7.4 Create booking retrieval API routes
+    - Add GET handler to app/api/bookings/route.ts with role-based filtering
+    - Create app/api/bookings/renter/route.ts for renter's bookings
+    - Create app/api/bookings/owner/route.ts for owner's bookings
+    - Include related vehicle and user data
+    - Group bookings by status
+    - _Requirements: 9.1, 9.5, 10.4_
+  - [x] 7.5 Create booking action API routes
+    - Create app/api/bookings/[id]/accept/route.ts for PATCH
+    - Create app/api/bookings/[id]/reject/route.ts for PATCH
+    - Create app/api/bookings/[id]/complete/route.ts for PATCH
+    - Validate user is vehicle owner for accept/reject/complete
+    - Validate endDate has passed for complete action
+    - _Requirements: 9.2, 9.3, 9.4, 10.1, 10.2, 10.3_
+  - [x] 7.6 Create booking request form component
+    - Create src/features/bookings/components/BookingRequestForm.tsx
+    - Add date picker for startDate and endDate
+    - Validate date range (start before end, future dates)
+    - Display vehicle details and calculated total price
+    - Call /api/bookings endpoint on submission
+    - Display conflict errors clearly
+    - _Requirements: 7.3, 7.4, 16.5_
+  - [x] 7.7 Create booking management components
+    - Create src/features/bookings/components/BookingCard.tsx
+    - Create src/features/bookings/components/BookingList.tsx
+    - Display booking details (vehicle, dates, status, price)
+    - Add action buttons for owners (accept/reject/complete)
+    - Group bookings by status (PENDING, CONFIRMED, COMPLETED)
+    - Implement responsive card layout
+    - _Requirements: 9.1, 9.5, 10.4, 16.2_
+
+- [x] 8. Feedback and rating system
+  - [x] 8.1 Create feedback service layer
+    - Create src/features/bookings/services/feedbackService.ts
+    - Implement submitFeedback function
+    - Validate booking has COMPLETED status
+    - Validate user is the booking renter
+    - Prevent duplicate feedback for same booking
+    - Implement getVehicleFeedback to fetch all feedback for vehicle
+    - Calculate average rating
+    - _Requirements: 18.1, 18.2, 18.3, 18.5_
+  - [x] 8.2 Create feedback API routes
+    - Create app/api/bookings/[bookingId]/feedback/route.ts for POST
+    - Validate rating is between 1-5
+    - Validate user is booking renter
+    - Validate booking is COMPLETED
+    - Create feedback record
+    - _Requirements: 18.1, 18.2, 18.3, 18.5_
+  - [x] 8.3 Create vehicle feedback API route
+    - Create app/api/vehicles/[vehicleId]/feedback/route.ts for GET
+    - Fetch all feedback for vehicle
+    - Calculate and return average rating
+    - Include renter information (name only, not sensitive data)
+    - _Requirements: 18.4_
+  - [x] 8.4 Create feedback submission component
+    - Create src/features/bookings/components/FeedbackForm.tsx
+    - Add star rating input (1-5 stars)
+    - Add comment textarea
+    - Display for COMPLETED bookings only
+    - Call /api/bookings/[bookingId]/feedback endpoint
+    - _Requirements: 18.1, 18.2_
+  - [x] 8.5 Create feedback display component
+    - Create src/features/vehicles/components/FeedbackList.tsx
+    - Display average rating prominently
+    - Show individual feedback with rating and comment
+    - Display renter name and date
+    - Implement pagination for many reviews
+    - _Requirements: 18.4_
+
+- [x] 9. Admin dashboard and management interface
+  - [x] 9.1 Create admin statistics API route
+    - Create app/api/admin/stats/route.ts for GET
+    - Count pending KYC submissions
+    - Count pending vehicles (PENDING + AWAITING_PAYMENT)
+    - Count total users
+    - Return dashboard statistics
+    - _Requirements: 11.2_
+  - [x] 9.2 Create admin user management API route
+    - Create app/api/admin/users/route.ts for GET
+    - Fetch all users with KYC status
+    - Support filtering by role and KYC status
+    - Include user statistics (vehicle count, booking count)
+    - _Requirements: 11.4, 11.5_
+  - [x] 9.3 Create admin dashboard page
+    - Create app/(dashboard)/admin/page.tsx
+    - Fetch and display statistics from /api/admin/stats
+    - Create navigation cards to KYC review, vehicle review, user management
+    - Display pending items requiring action
+    - Implement responsive layout
+    - _Requirements: 11.1, 11.2, 11.3, 16.2_
+  - [x] 9.4 Create admin KYC management page
+    - Create app/(dashboard)/admin/kyc/page.tsx
+    - Integrate KYCReviewPanel component
+    - Display pending KYC submissions
+    - Provide approve/reject actions
+    - _Requirements: 11.3_
+  - [x] 9.5 Create admin vehicle management page
+    - Create app/(dashboard)/admin/vehicles/page.tsx
+    - Integrate VehicleReviewPanel component
+    - Display pending and awaiting payment vehicles
+    - Provide review and payment confirmation actions
+    - _Requirements: 11.3_
+  - [x] 9.6 Create admin user management page
+    - Create app/(dashboard)/admin/users/page.tsx
+    - Fetch users from /api/admin/users
+    - Display user table with role, KYC status, join date
+    - Add filtering by role and KYC status
+    - Add search functionality
+    - _Requirements: 11.4, 11.5_
+
+- [x] 10. Owner dashboard and vehicle management interface
+  - [x] 10.1 Create owner statistics calculation
+    - Add logic to count owner's vehicles
+    - Count pending booking requests for owner's vehicles
+    - Count active rentals (CONFIRMED bookings)
+    - _Requirements: 12.2_
+  - [x] 10.2 Create owner dashboard page
+    - Create app/(dashboard)/owner/page.tsx
+    - Display owner statistics (vehicle count, pending requests, active rentals)
+    - Create navigation cards to add vehicle, manage vehicles, view bookings
+    - Highlight pending booking requests
+    - Implement responsive layout
+    - _Requirements: 12.1, 12.2, 12.3, 12.5, 16.2_
+  - [x] 10.3 Create owner vehicle management page
+    - Create app/(dashboard)/owner/vehicles/page.tsx
+    - Fetch owner's vehicles from /api/vehicles
+    - Display vehicle cards with status badges
+    - Add action buttons based on status (edit, view bookings)
+    - Add "Add New Vehicle" button
+    - _Requirements: 12.3, 12.4_
+  - [x] 10.4 Create owner add vehicle page
+    - Create app/(dashboard)/owner/vehicles/new/page.tsx
+    - Integrate VehicleListingForm component
+    - Redirect to vehicle management after successful submission
+    - _Requirements: 12.3_
+  - [x] 10.5 Create owner booking management page
+    - Create app/(dashboard)/owner/bookings/page.tsx
+    - Fetch owner's bookings from /api/bookings/owner
+    - Integrate BookingList component
+    - Display pending requests prominently
+    - Add accept/reject/complete actions
+    - _Requirements: 12.3, 12.5_
+
+- [x] 11. Renter dashboard and vehicle browsing interface
+  - [x] 11.1 Create renter statistics calculation
+    - Count active bookings (PENDING + CONFIRMED)
+    - Count completed rentals (COMPLETED)
+    - _Requirements: 13.2_
+  - [x] 11.2 Create renter dashboard page
+    - Create app/(dashboard)/renter/page.tsx
+    - Display renter statistics
+    - Show featured/recommended vehicles
+    - Create navigation to browse vehicles, view bookings, profile
+    - Implement responsive layout
+    - _Requirements: 13.1, 13.2, 13.3, 16.2_
+  - [x] 11.3 Create vehicle browsing page
+    - Create app/(dashboard)/renter/vehicles/page.tsx
+    - Integrate VehicleGrid component
+    - Fetch approved vehicles from /api/vehicles
+    - Add filtering sidebar (location, price range, vehicle type)
+    - Add search bar
+    - _Requirements: 13.2, 13.3, 6.3, 6.4_
+  - [x] 11.4 Create vehicle details page
+    - Create app/(dashboard)/renter/vehicles/[id]/page.tsx
+    - Fetch vehicle details from /api/vehicles/[id]
+    - Display complete vehicle information with image gallery
+    - Integrate FeedbackList component
+    - Add "Book Now" button that opens BookingRequestForm
+    - _Requirements: 6.5, 18.4_
+  - [x] 11.5 Create renter booking management page
+    - Create app/(dashboard)/renter/bookings/page.tsx
+    - Fetch renter's bookings from /api/bookings/renter
+    - Integrate BookingList component
+    - Display booking status and vehicle details
+    - Add feedback submission for COMPLETED bookings
+    - _Requirements: 13.3, 13.4, 13.5_
+
+- [x] 12. Shared UI components library
+  - [x] 12.1 Create base UI components
+    - Create src/core/components/Button.tsx with variants (primary, secondary, danger)
+    - Create src/core/components/Input.tsx with validation states
+    - Create src/core/components/Select.tsx for dropdowns
+    - Create src/core/components/Badge.tsx for status indicators
+    - Create src/core/components/Card.tsx for content containers
+    - Create src/core/components/Modal.tsx for dialogs
+    - Create src/core/components/LoadingSpinner.tsx
+    - Create src/core/components/ErrorMessage.tsx
+    - Style all components with TailwindCSS
+    - Ensure accessibility compliance (ARIA labels, keyboard navigation)
+    - _Requirements: 16.1, 16.3, 16.4, 16.5, 16.6_
+  - [x] 12.2 Create layout components
+    - Create src/core/components/DashboardLayout.tsx with navigation
+    - Create src/core/components/Navbar.tsx with role-based menu items
+    - Create src/core/components/Sidebar.tsx for dashboard navigation
+    - Implement responsive navigation (mobile hamburger menu)
+    - Add user profile dropdown with logout
+    - _Requirements: 16.2, 16.3_
+
+- [x] 13. Form validation and error handling
+  - [x] 13.1 Create Zod validation schemas
+    - Create src/core/utils/validation.ts
+    - Define schemas for registration, login, KYC submission
+    - Define schemas for vehicle listing, booking request, feedback
+    - Add custom validators (date range, price validation, email format)
+    - _Requirements: 17.2, 17.3_
+  - [x] 13.2 Implement client-side validation
+    - Add validation to all form components
+    - Display inline error messages
+    - Prevent submission with invalid data
+    - _Requirements: 17.2_
+  - [x] 13.3 Implement server-side validation
+    - Validate all API route request bodies
+    - Return structured error responses
+    - Handle Prisma errors (unique constraint, foreign key violations)
+    - _Requirements: 17.2, 17.3_
+  - [x] 13.4 Create error handling utilities
+    - Create src/core/utils/errorHandler.ts
+    - Implement consistent error response format
+    - Add error logging for debugging
+    - Sanitize error messages for client display
+    - _Requirements: 16.5, 17.6_
+
+- [x] 14. Security hardening
+  - [x] 14.1 Implement input sanitization
+    - Add XSS protection for user-generated content
+    - Sanitize HTML in comments and descriptions
+    - Validate file uploads (images)
+    - _Requirements: 17.6_
+  - [x] 14.2 Add CSRF protection
+    - Configure NextAuth CSRF tokens
+    - Validate tokens on state-changing operations
+    - _Requirements: 17.4_
+  - [x] 14.3 Review and test authentication flows
+    - Test password hashing and verification
+    - Test session management and token expiration
+    - Test role-based access control
+    - Verify middleware protection on all routes
+    - _Requirements: 17.1, 17.2, 17.5_
+
+- [x] 15. Checkpoint - Core functionality verification
+  - Ensure all tests pass, ask the user if questions arise.
+  - Verify authentication and registration work end-to-end
+  - Verify KYC submission and approval workflow
+  - Verify vehicle listing and approval workflow
+  - Verify booking creation with conflict detection
+  - Test role-based access control for all dashboards
+
+- [x] 16. Integration and final wiring
+  - [x] 16.1 Connect all dashboard pages with navigation
+    - Ensure navigation links work across all dashboards
+    - Implement role-based navigation menu items
+    - Add breadcrumbs for nested pages
+    - _Requirements: 16.3_
+  - [x] 16.2 Implement loading states and optimistic updates
+    - Add loading spinners during API calls
+    - Implement optimistic UI updates for better UX
+    - Add skeleton loaders for data fetching
+    - _Requirements: 16.4_
+  - [x] 16.3 Add notifications and feedback messages
+    - Implement toast notifications for success/error messages
+    - Add confirmation dialogs for destructive actions
+    - Display status change notifications
+    - _Requirements: 16.5_
+  - [x] 16.4 Implement responsive design refinements
+    - Test all pages on mobile, tablet, desktop
+    - Fix any layout issues
+    - Ensure touch-friendly UI elements on mobile
+    - _Requirements: 16.2_
+  - [x] 16.5 Add data fetching optimization
+    - Implement React Server Components where appropriate
+    - Add caching strategies for frequently accessed data
+    - Optimize database queries with proper includes
+    - _Requirements: Performance best practices_
+
+- [ ] 17. Testing and quality assurance
+  - [ ]\* 17.1 Write integration tests for authentication flows
+    - Test registration with different roles
+    - Test login with valid/invalid credentials
+    - Test session persistence
+    - _Requirements: 1.1, 1.2, 1.3_
+  - [ ]\* 17.2 Write integration tests for KYC workflow
+    - Test KYC submission
+    - Test admin approval/rejection
+    - Test KYC status checks
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
+  - [ ]\* 17.3 Write integration tests for vehicle workflow
+    - Test vehicle listing submission
+    - Test admin review and approval process
+    - Test vehicle browsing and filtering
+    - _Requirements: 4.1, 4.2, 5.1, 5.2, 5.3, 5.4, 5.5, 6.1, 6.2, 6.3_
+  - [ ]\* 17.4 Write integration tests for booking workflow
+    - Test booking creation with conflict detection
+    - Test owner accept/reject actions
+    - Test booking completion
+    - _Requirements: 7.1, 7.2, 7.3, 7.4, 8.1, 8.2, 9.1, 9.2, 9.3, 10.1, 10.2_
+  - [ ]\* 17.5 Write integration tests for feedback system
+    - Test feedback submission for completed bookings
+    - Test feedback retrieval and rating calculation
+    - Test duplicate feedback prevention
+    - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5_
+  - [ ]\* 17.6 Perform security testing
+    - Test SQL injection prevention
+    - Test XSS prevention
+    - Test CSRF protection
+    - Test unauthorized access attempts
+    - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.6_
+
+- [ ] 18. Final checkpoint and deployment preparation
+  - Ensure all tests pass, ask the user if questions arise.
+  - Verify all requirements are implemented
+  - Test complete user journeys for all three roles
+  - Review code for security vulnerabilities
+  - Ensure all error handling is in place
+  - Verify responsive design on all devices
+
+## Notes
+
+- Tasks marked with `*` are optional testing tasks and can be skipped for faster MVP delivery
+- Each task references specific requirements for traceability
+- Checkpoints ensure incremental validation at key milestones
+- The implementation follows a bottom-up approach: infrastructure → services → API → UI
+- All components should use TailwindCSS for consistent styling
+- All API routes should validate inputs and handle errors gracefully
+- Database queries should use Prisma's type-safe API
+- Authentication and authorization should be tested thoroughly before moving to feature implementation
