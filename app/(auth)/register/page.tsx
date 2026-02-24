@@ -1,7 +1,24 @@
 import Link from "next/link";
 import { RegisterForm } from "@/features/authentication/components/RegisterForm";
+import { auth } from "@/core/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  // Check if user is already authenticated
+  const session = await auth();
+
+  // Redirect authenticated users to their dashboard
+  if (session?.user) {
+    const role = session.user.role;
+    if (role === "ADMIN") {
+      redirect("/admin");
+    } else if (role === "OWNER") {
+      redirect("/owner");
+    } else {
+      redirect("/renter");
+    }
+  }
+
   return (
     <div className="flex min-h-screen bg-neutral-900 relative overflow-hidden">
       {/* Background Image */}

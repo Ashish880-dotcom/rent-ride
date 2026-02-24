@@ -1,6 +1,7 @@
 import { auth } from "@/core/lib/auth";
 import { redirect } from "next/navigation";
 import { Navbar, NavItem } from "@/core/components/Navbar";
+import { ThemeProvider } from "@/core/contexts/ThemeContext";
 
 export default async function DashboardLayout({
   children,
@@ -30,10 +31,15 @@ export default async function DashboardLayout({
 
     if (role === "OWNER") {
       return [
-        { label: "Dashboard", href: "/owner", roles: ["OWNER"] },
+        { label: "Owner Dashboard", href: "/owner", roles: ["OWNER"] },
+        { label: "Owner Profile", href: "/owner/profile", roles: ["OWNER"] },
+        {
+          label: "Add Your Vehicles",
+          href: "/owner/vehicles/new",
+          roles: ["OWNER"],
+        },
         { label: "My Vehicles", href: "/owner/vehicles", roles: ["OWNER"] },
         { label: "Bookings", href: "/owner/bookings", roles: ["OWNER"] },
-        { label: "Add Vehicle", href: "/owner/vehicles/new", roles: ["OWNER"] },
       ];
     }
 
@@ -48,10 +54,22 @@ export default async function DashboardLayout({
 
   const navItems = getNavItems();
 
+  // Determine if we're in admin panel for dark theme
+  const isAdminPanel = role === "ADMIN";
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar userRole={role} userEmail={email} navItems={navItems} />
-      <main>{children}</main>
-    </div>
+    <ThemeProvider>
+      <div
+        className={`min-h-screen ${isAdminPanel ? "bg-neutral-900" : "bg-gray-50"}`}
+      >
+        <Navbar
+          userRole={role}
+          userEmail={email}
+          navItems={navItems}
+          isAdminPanel={isAdminPanel}
+        />
+        <main>{children}</main>
+      </div>
+    </ThemeProvider>
   );
 }

@@ -1,7 +1,24 @@
 import Link from "next/link";
 import { LoginForm } from "@/features/authentication/components/LoginForm";
+import { auth } from "@/core/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  // Check if user is already authenticated
+  const session = await auth();
+
+  // Redirect authenticated users to their dashboard
+  if (session?.user) {
+    const role = session.user.role;
+    if (role === "ADMIN") {
+      redirect("/admin");
+    } else if (role === "OWNER") {
+      redirect("/owner");
+    } else {
+      redirect("/renter");
+    }
+  }
+
   return (
     <div className="flex min-h-screen bg-neutral-900 relative overflow-hidden">
       {/* Background Image */}

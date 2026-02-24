@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { vehicleService } from "@/features/vehicles/services/vehicleService";
+import { auth } from "@/core/lib/auth";
+import { Role } from "@/generated/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -30,6 +32,42 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error fetching vehicle details:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Only admins can delete vehicles
+    if (session.user.role !== Role.ADMIN) {
+      return NextResponse.json(
+        { error: "Only admins can delete vehicles" },
+        { status: 403 },
+      );
+    }
+
+    const { id: vehicleId } = await params;
+    await vehicleService.deleteVehicle(vehicleId);
+
+    return NextResponse.json({ message: "Vehicle deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    console.error("Error deleting vehicle:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

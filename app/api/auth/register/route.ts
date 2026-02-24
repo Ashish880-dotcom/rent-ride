@@ -26,6 +26,16 @@ export async function POST(request: NextRequest) {
 
     const { email, password, role } = validationResult.data;
 
+    // Extra security: Prevent ADMIN role registration
+    if (role === "ADMIN") {
+      return NextResponse.json(
+        {
+          error: "Cannot register as administrator through public registration",
+        },
+        { status: 403 },
+      );
+    }
+
     // Register user
     const user = await AuthService.register({ email, password, role });
 

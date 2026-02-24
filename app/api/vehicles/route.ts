@@ -15,10 +15,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user has OWNER role
-    if (session.user.role !== Role.OWNER && session.user.role !== Role.ADMIN) {
+    // Check if user has OWNER role (ONLY owners can create vehicles through this endpoint)
+    if (session.user.role !== Role.OWNER) {
       return NextResponse.json(
-        { error: "Only vehicle owners can list vehicles" },
+        {
+          error: "Only vehicle owners can list vehicles through this endpoint",
+        },
         { status: 403 },
       );
     }

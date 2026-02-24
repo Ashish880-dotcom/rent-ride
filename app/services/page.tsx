@@ -171,13 +171,13 @@ export default function ServicesPage() {
               Services
             </Link>
             <Link
-              href="/#about"
+              href="/about"
               className="text-neutral-300 hover:text-white transition-colors text-sm tracking-wide uppercase font-medium"
             >
               About
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="text-neutral-300 hover:text-white transition-colors text-sm tracking-wide uppercase font-medium"
             >
               Contact

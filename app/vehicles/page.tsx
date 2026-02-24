@@ -272,25 +272,25 @@ export default function VehiclesPage() {
 
           <div className="hidden md:flex items-center gap-8">
             <Link
-              href="/#vehicles"
+              href="/vehicles"
               className="text-amber-500 transition-colors text-sm tracking-wide uppercase font-medium"
             >
               Vehicles
             </Link>
             <Link
-              href="/#services"
+              href="/services"
               className="text-neutral-300 hover:text-white transition-colors text-sm tracking-wide uppercase font-medium"
             >
               Services
             </Link>
             <Link
-              href="/#about"
+              href="/about"
               className="text-neutral-300 hover:text-white transition-colors text-sm tracking-wide uppercase font-medium"
             >
               About
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="text-neutral-300 hover:text-white transition-colors text-sm tracking-wide uppercase font-medium"
             >
               Contact

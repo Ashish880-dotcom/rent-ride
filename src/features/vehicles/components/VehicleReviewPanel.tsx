@@ -19,39 +19,55 @@ interface Vehicle {
   createdAt: string;
 }
 
+type ViewMode = "pending" | "all";
+
 export function VehicleReviewPanel() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("pending");
 
   useEffect(() => {
-    fetchPendingVehicles();
-  }, []);
+    fetchVehicles();
+  }, [viewMode]);
 
-  const fetchPendingVehicles = async () => {
+  const fetchVehicles = async () => {
     try {
       setLoading(true);
-      // Fetch both PENDING and AWAITING_PAYMENT vehicles
-      const [pendingResponse, awaitingPaymentResponse] = await Promise.all([
-        fetch("/api/vehicles?status=PENDING"),
-        fetch("/api/vehicles?status=AWAITING_PAYMENT"),
-      ]);
 
-      if (!pendingResponse.ok || !awaitingPaymentResponse.ok) {
-        throw new Error("Failed to fetch vehicles for review");
+      if (viewMode === "pending") {
+        // Fetch both PENDING and AWAITING_PAYMENT vehicles
+        const [pendingResponse, awaitingPaymentResponse] = await Promise.all([
+          fetch("/api/vehicles?status=PENDING"),
+          fetch("/api/vehicles?status=AWAITING_PAYMENT"),
+        ]);
+
+        if (!pendingResponse.ok || !awaitingPaymentResponse.ok) {
+          throw new Error("Failed to fetch vehicles for review");
+        }
+
+        const pendingData = await pendingResponse.json();
+        const awaitingPaymentData = await awaitingPaymentResponse.json();
+
+        // Combine both lists
+        const allVehicles = [
+          ...(pendingData.vehicles || []),
+          ...(awaitingPaymentData.vehicles || []),
+        ];
+
+        setVehicles(allVehicles);
+      } else {
+        // Fetch all vehicles
+        const response = await fetch("/api/vehicles");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch all vehicles");
+        }
+
+        const data = await response.json();
+        setVehicles(data.vehicles || []);
       }
-
-      const pendingData = await pendingResponse.json();
-      const awaitingPaymentData = await awaitingPaymentResponse.json();
-
-      // Combine both lists
-      const allVehicles = [
-        ...(pendingData.vehicles || []),
-        ...(awaitingPaymentData.vehicles || []),
-      ];
-
-      setVehicles(allVehicles);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -75,7 +91,7 @@ export function VehicleReviewPanel() {
       }
 
       // Refresh the list
-      await fetchPendingVehicles();
+      await fetchVehicles();
     } catch (err) {
       alert(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -99,7 +115,7 @@ export function VehicleReviewPanel() {
       }
 
       // Refresh the list
-      await fetchPendingVehicles();
+      await fetchVehicles();
     } catch (err) {
       alert(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -124,7 +140,36 @@ export function VehicleReviewPanel() {
       }
 
       // Refresh the list
-      await fetchPendingVehicles();
+      await fetchVehicles();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDelete = async (vehicleId: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to permanently delete this vehicle? This action cannot be undone.",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setActionLoading(vehicleId);
+      const response = await fetch(`/api/vehicles/${vehicleId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete vehicle");
+      }
+
+      // Refresh the list
+      await fetchVehicles();
     } catch (err) {
       alert(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -135,7 +180,7 @@ export function VehicleReviewPanel() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-lg text-gray-600">Loading pending vehicles...</div>
+        <div className="text-lg text-gray-600">Loading vehicles...</div>
       </div>
     );
   }
@@ -148,19 +193,45 @@ export function VehicleReviewPanel() {
     );
   }
 
-  if (vehicles.length === 0) {
-    return (
-      <div className="bg-white p-8 rounded-lg shadow-md text-center">
-        <p className="text-gray-600">
-          No vehicles pending review or awaiting payment confirmation.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Vehicle Review Panel</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Vehicle Management</h2>
+
+        {/* View Mode Toggle */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode("pending")}
+            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              viewMode === "pending"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            Pending Review
+          </button>
+          <button
+            onClick={() => setViewMode("all")}
+            className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              viewMode === "all"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
+          >
+            All Vehicles
+          </button>
+        </div>
+      </div>
+
+      {vehicles.length === 0 && (
+        <div className="bg-white p-8 rounded-lg shadow-md text-center">
+          <p className="text-gray-600">
+            {viewMode === "pending"
+              ? "No vehicles pending review or awaiting payment confirmation."
+              : "No vehicles found in the system."}
+          </p>
+        </div>
+      )}
 
       <div className="space-y-4">
         {vehicles.map((vehicle) => (
@@ -249,7 +320,7 @@ export function VehicleReviewPanel() {
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-3 mt-4 flex-wrap">
                   {vehicle.status === "PENDING" && (
                     <>
                       <button
@@ -294,6 +365,19 @@ export function VehicleReviewPanel() {
                           : "Reject"}
                       </button>
                     </>
+                  )}
+
+                  {/* Delete button available for all vehicles in "All Vehicles" view */}
+                  {viewMode === "all" && (
+                    <button
+                      onClick={() => handleDelete(vehicle.id)}
+                      disabled={actionLoading === vehicle.id}
+                      className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                      {actionLoading === vehicle.id
+                        ? "Deleting..."
+                        : "Delete Vehicle"}
+                    </button>
                   )}
                 </div>
               </div>

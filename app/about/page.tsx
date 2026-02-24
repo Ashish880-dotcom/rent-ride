@@ -152,7 +152,7 @@ export default function AboutPage() {
               About
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="text-neutral-300 hover:text-white transition-colors text-sm tracking-wide uppercase font-medium"
             >
               Contact

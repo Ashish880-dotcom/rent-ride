@@ -238,4 +238,19 @@ export const vehicleService = {
       totalFeedbacks,
     };
   },
+
+  async deleteVehicle(vehicleId: string) {
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id: vehicleId },
+    });
+
+    if (!vehicle) {
+      throw new Error("Vehicle not found");
+    }
+
+    // Delete the vehicle (cascading deletes will handle related records)
+    return await prisma.vehicle.delete({
+      where: { id: vehicleId },
+    });
+  },
 };

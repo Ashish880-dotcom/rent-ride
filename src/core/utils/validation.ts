@@ -106,7 +106,9 @@ export const dateRangeValidator = z
 export const RegisterSchema = z.object({
   email: emailValidator,
   password: passwordValidator,
-  role: RoleSchema,
+  role: z.enum(["OWNER", "USER"], {
+    errorMap: () => ({ message: "Role must be either OWNER or USER" }),
+  }),
 });
 
 export const LoginSchema = z.object({
