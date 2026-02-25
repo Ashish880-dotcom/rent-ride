@@ -192,7 +192,18 @@ export default function RenterBookingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen relative">
+      {/* Background Image */}
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+          zIndex: -1,
+        }}
+      />
+      <div className="fixed inset-0 bg-neutral-900/90" style={{ zIndex: -1 }} />
+
       {/* Hero Section */}
       <div className="relative bg-neutral-950 border-b border-neutral-800">
         <div
@@ -542,7 +553,7 @@ export default function RenterBookingsPage() {
                         Total Price
                       </span>
                       <span className="text-xl font-bold text-amber-500">
-                        ${booking.totalPrice}
+                        Rs.{booking.totalPrice}
                       </span>
                     </div>
                   </div>

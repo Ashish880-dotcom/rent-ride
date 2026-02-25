@@ -114,7 +114,7 @@ export default function BookingCard({
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Total Price:</span>
           <span className="font-bold text-blue-600">
-            ${booking.totalPrice.toFixed(2)}
+            Rs.{booking.totalPrice.toFixed(2)}
           </span>
         </div>
         {isOwner && booking.renter && (

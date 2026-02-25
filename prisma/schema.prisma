@@ -40,6 +40,7 @@ enum BookingStatus {
 // Models
 model User {
   id            String    @id @default(cuid())
+  name          String
   email         String    @unique
   passwordHash  String
   role          Role
@@ -53,6 +54,7 @@ model User {
 
   @@index([email])
   @@index([role])
+  @@index([name])
 }
 
 model KYC {

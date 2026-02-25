@@ -43,7 +43,7 @@ export function VehicleCard({ vehicle, onViewDetails }: VehicleCardProps) {
             <span className="font-medium">Location:</span> {vehicle.location}
           </p>
           <p className="text-lg font-bold text-blue-600">
-            ${vehicle.pricePerDay.toFixed(2)} / day
+            Rs.{vehicle.pricePerDay.toFixed(2)} / day
           </p>
         </div>
 

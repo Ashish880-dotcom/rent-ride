@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, password, role } = validationResult.data;
+    const { name, email, password, role } = validationResult.data;
 
     // Extra security: Prevent ADMIN role registration
     if (role === "ADMIN") {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Register user
-    const user = await AuthService.register({ email, password, role });
+    const user = await AuthService.register({ name, email, password, role });
 
     // Return user data (excluding password hash)
     return NextResponse.json(

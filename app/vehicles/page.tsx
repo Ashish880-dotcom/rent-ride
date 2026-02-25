@@ -580,10 +580,10 @@ export default function VehiclesPage() {
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-white text-2xl font-bold">
-                        ${vehicle.price}
+                        Rs.{vehicle.price}
                       </span>
                       <span className="text-neutral-500 text-sm line-through">
-                        ${vehicle.originalPrice}
+                        Rs.{vehicle.originalPrice}
                       </span>
                     </div>
                     <span className="text-neutral-400 text-xs">/day</span>

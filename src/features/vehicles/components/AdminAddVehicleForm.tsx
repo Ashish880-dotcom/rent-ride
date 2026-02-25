@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { VehicleListingSchema } from "@/core/utils/validation";
 import { z } from "zod";
+import { useTheme } from "@/core/contexts/ThemeContext";
 
 interface VehicleFormData {
   ownerId: string;
@@ -32,6 +33,7 @@ interface FormErrors {
 }
 
 export function AdminAddVehicleForm() {
+  const { isDark } = useTheme();
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loadingOwners, setLoadingOwners] = useState(true);
   const [formData, setFormData] = useState<VehicleFormData>({
@@ -212,19 +214,27 @@ export function AdminAddVehicleForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
+    <div
+      className={`max-w-2xl mx-auto p-6 rounded-lg shadow-md ${isDark ? "bg-neutral-800 border border-neutral-700" : "bg-white"}`}
+    >
+      <h2
+        className={`text-2xl font-bold mb-6 ${isDark ? "text-white" : "text-gray-800"}`}
+      >
         Add Vehicle for Owner
       </h2>
 
       {successMessage && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div
+          className={`mb-4 p-4 border rounded ${isDark ? "bg-green-900/50 border-green-600 text-green-200" : "bg-green-100 border-green-400 text-green-700"}`}
+        >
           {successMessage}
         </div>
       )}
 
       {errorMessage && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div
+          className={`mb-4 p-4 border rounded ${isDark ? "bg-red-900/50 border-red-600 text-red-200" : "bg-red-100 border-red-400 text-red-700"}`}
+        >
           {errorMessage}
         </div>
       )}
@@ -234,20 +244,24 @@ export function AdminAddVehicleForm() {
         <div>
           <label
             htmlFor="ownerId"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
             Vehicle Owner *
           </label>
           {loadingOwners ? (
-            <p className="text-sm text-gray-500">Loading owners...</p>
+            <p
+              className={`text-sm ${isDark ? "text-neutral-400" : "text-gray-500"}`}
+            >
+              Loading owners...
+            </p>
           ) : (
             <select
               id="ownerId"
               name="ownerId"
               value={formData.ownerId}
               onChange={handleChange}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.ownerId ? "border-red-500" : "border-gray-300"
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+                errors.ownerId ? "border-red-500" : ""
               }`}
             >
               <option value="">Select an owner</option>
@@ -269,13 +283,13 @@ export function AdminAddVehicleForm() {
           )}
         </div>
 
-        {/* Make */}
+        {/* Name of Vehicle */}
         <div>
           <label
             htmlFor="make"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
-            Make *
+            Name of Vehicle *
           </label>
           <input
             type="text"
@@ -283,8 +297,8 @@ export function AdminAddVehicleForm() {
             name="make"
             value={formData.make}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.make ? "border-red-500" : "border-gray-300"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+              errors.make ? "border-red-500" : ""
             }`}
             placeholder="e.g., Toyota, Honda, Ford"
           />
@@ -297,7 +311,7 @@ export function AdminAddVehicleForm() {
         <div>
           <label
             htmlFor="model"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
             Model *
           </label>
@@ -307,8 +321,8 @@ export function AdminAddVehicleForm() {
             name="model"
             value={formData.model}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.model ? "border-red-500" : "border-gray-300"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+              errors.model ? "border-red-500" : ""
             }`}
             placeholder="e.g., Camry, Civic, F-150"
           />
@@ -321,7 +335,7 @@ export function AdminAddVehicleForm() {
         <div>
           <label
             htmlFor="year"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
             Year *
           </label>
@@ -331,8 +345,8 @@ export function AdminAddVehicleForm() {
             name="year"
             value={formData.year}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.year ? "border-red-500" : "border-gray-300"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+              errors.year ? "border-red-500" : ""
             }`}
             placeholder={`e.g., ${new Date().getFullYear()}`}
             min="1900"
@@ -347,9 +361,9 @@ export function AdminAddVehicleForm() {
         <div>
           <label
             htmlFor="pricePerDay"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
-            Price Per Day ($) *
+            Price Per Day (Rs.) *
           </label>
           <input
             type="number"
@@ -357,8 +371,8 @@ export function AdminAddVehicleForm() {
             name="pricePerDay"
             value={formData.pricePerDay}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.pricePerDay ? "border-red-500" : "border-gray-300"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+              errors.pricePerDay ? "border-red-500" : ""
             }`}
             placeholder="e.g., 50"
             min="0"
@@ -373,7 +387,7 @@ export function AdminAddVehicleForm() {
         <div>
           <label
             htmlFor="location"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
             Location *
           </label>
@@ -383,8 +397,8 @@ export function AdminAddVehicleForm() {
             name="location"
             value={formData.location}
             onChange={handleChange}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.location ? "border-red-500" : "border-gray-300"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+              errors.location ? "border-red-500" : ""
             }`}
             placeholder="e.g., New York, NY"
           />
@@ -397,7 +411,7 @@ export function AdminAddVehicleForm() {
         <div>
           <label
             htmlFor="description"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
           >
             Description (Optional)
           </label>
@@ -407,14 +421,16 @@ export function AdminAddVehicleForm() {
             value={formData.description}
             onChange={handleChange}
             rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"}`}
             placeholder="Describe the vehicle, its features, condition, etc."
           />
         </div>
 
         {/* Images */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            className={`block text-sm font-medium mb-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
+          >
             Vehicle Images *
           </label>
           <div className="flex gap-2">
@@ -422,8 +438,8 @@ export function AdminAddVehicleForm() {
               type="text"
               value={imageInput}
               onChange={(e) => setImageInput(e.target.value)}
-              className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                errors.images ? "border-red-500" : "border-gray-300"
+              className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${isDark ? "bg-neutral-900 text-white border-neutral-600 focus:ring-amber-500 placeholder-neutral-500" : "bg-white text-gray-900 border-gray-300 focus:ring-blue-500"} ${
+                errors.images ? "border-red-500" : ""
               }`}
               placeholder="https://example.com/image.jpg"
               onKeyPress={(e) => {
@@ -436,7 +452,7 @@ export function AdminAddVehicleForm() {
             <button
               type="button"
               onClick={handleAddImage}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+              className={`px-4 py-2 rounded-md transition-colors ${isDark ? "bg-neutral-700 hover:bg-neutral-600 text-white" : "bg-gray-600 hover:bg-gray-700 text-white"}`}
             >
               Add
             </button>
@@ -450,9 +466,11 @@ export function AdminAddVehicleForm() {
               {formData.images.map((image, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200"
+                  className={`flex items-center justify-between p-2 rounded border ${isDark ? "bg-neutral-900 border-neutral-700" : "bg-gray-50 border-gray-200"}`}
                 >
-                  <span className="text-sm text-gray-700 truncate flex-1">
+                  <span
+                    className={`text-sm truncate flex-1 ${isDark ? "text-neutral-300" : "text-gray-700"}`}
+                  >
                     {image}
                   </span>
                   <button
@@ -472,10 +490,10 @@ export function AdminAddVehicleForm() {
         <button
           type="submit"
           disabled={isSubmitting || loadingOwners || owners.length === 0}
-          className={`w-full py-2 px-4 rounded-md text-white font-medium transition-colors ${
+          className={`w-full py-2 px-4 rounded-md font-medium transition-colors ${
             isSubmitting || loadingOwners || owners.length === 0
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
+              ? `${isDark ? "bg-neutral-700 text-neutral-500" : "bg-gray-400 text-gray-200"} cursor-not-allowed`
+              : `${isDark ? "bg-amber-600 hover:bg-amber-700" : "bg-blue-600 hover:bg-blue-700"} text-white`
           }`}
         >
           {isSubmitting ? "Adding Vehicle..." : "Add Vehicle"}

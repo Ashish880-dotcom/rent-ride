@@ -160,7 +160,7 @@ export default function BookingRequestForm({
         </h3>
         <p className="text-gray-600 mb-2">{vehicle.location}</p>
         <p className="text-xl font-bold text-blue-600">
-          ${vehicle.pricePerDay.toFixed(2)} / day
+          Rs.{vehicle.pricePerDay.toFixed(2)} / day
         </p>
         {vehicle.description && (
           <p className="text-gray-700 mt-2">{vehicle.description}</p>
@@ -222,7 +222,7 @@ export default function BookingRequestForm({
           <div className="p-4 bg-blue-50 rounded-lg">
             <p className="text-sm text-gray-600">Total Price</p>
             <p className="text-2xl font-bold text-blue-600">
-              ${totalPrice.toFixed(2)}
+              Rs.{totalPrice.toFixed(2)}
             </p>
           </div>
         )}

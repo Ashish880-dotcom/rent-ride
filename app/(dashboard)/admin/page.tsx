@@ -42,15 +42,31 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen relative">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div
+          className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+          style={{ zIndex: -1 }}
+        />
+
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="animate-pulse">
-            <div className="h-10 bg-neutral-800 rounded w-1/4 mb-8"></div>
+            <div
+              className={`h-10 rounded w-1/4 mb-8 ${isDark ? "bg-neutral-800" : "bg-gray-200"}`}
+            ></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="bg-neutral-800 rounded-lg p-6 h-32"
+                  className={`rounded-lg p-6 h-32 ${isDark ? "bg-neutral-800" : "bg-white"}`}
                 ></div>
               ))}
             </div>
@@ -62,41 +78,67 @@ export default function AdminDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen relative flex items-center justify-center">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div
+          className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+          style={{ zIndex: -1 }}
+        />
+
         <div className="text-red-500">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
-    >
-      {/* Hero Section with Background */}
+    <div className="min-h-screen relative">
+      {/* Background Image for Entire Page - Same for both light and dark mode */}
       <div
-        className={`relative border-b transition-colors duration-200 ${isDark ? "bg-neutral-950 border-neutral-800" : "bg-gradient-to-r from-purple-600 to-purple-800 border-purple-700"}`}
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+          zIndex: -1,
+        }}
+      />
+      <div
+        className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/70"}`}
+        style={{ zIndex: -1 }}
+      />
+
+      {/* Hero Section */}
+      <div
+        className={`relative border-b ${isDark ? "border-neutral-800" : "border-gray-200"}`}
       >
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage: isDark
-              ? "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')"
-              : "url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920')",
-          }}
-        />
-        <div className="relative max-w-7xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl md:text-5xl font-serif text-white mb-3">
+              <h1
+                className={`text-4xl md:text-5xl font-serif mb-3 ${isDark ? "text-white" : "text-gray-900"}`}
+              >
                 Admin Dashboard
               </h1>
-              <p className="text-neutral-400 text-lg">
+              <p
+                className={`text-lg ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Manage your platform with complete control
               </p>
             </div>
             <button
               onClick={handleSignOut}
-              className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white font-medium rounded-lg border border-neutral-700 hover:border-amber-600 transition-all flex items-center gap-2"
+              className={`px-6 py-3 font-medium rounded-lg border transition-all flex items-center gap-2 ${
+                isDark
+                  ? "bg-neutral-800 hover:bg-neutral-700 text-white border-neutral-700 hover:border-amber-600"
+                  : "bg-white hover:bg-gray-50 text-gray-900 border-gray-300 hover:border-blue-500"
+              }`}
             >
               <svg
                 className="w-5 h-5"
@@ -120,14 +162,20 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700 hover:border-amber-600 transition-colors">
+          <div
+            className={`rounded-lg p-6 border transition-colors ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-blue-500 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-neutral-400 text-sm font-medium uppercase tracking-wide">
+              <h3
+                className={`text-sm font-medium uppercase tracking-wide ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Pending KYC
               </h3>
-              <div className="w-12 h-12 bg-amber-600/10 rounded-lg flex items-center justify-center">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? "bg-amber-600/10" : "bg-blue-100"}`}
+              >
                 <svg
-                  className="w-6 h-6 text-amber-500"
+                  className={`w-6 h-6 ${isDark ? "text-amber-500" : "text-blue-600"}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -141,22 +189,32 @@ export default function AdminDashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-4xl font-bold text-white mb-2">
+            <p
+              className={`text-4xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {stats?.pendingKYC || 0}
             </p>
-            <p className="text-neutral-500 text-sm">
+            <p
+              className={`text-sm ${isDark ? "text-neutral-500" : "text-gray-600"}`}
+            >
               Submissions awaiting review
             </p>
           </div>
 
-          <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700 hover:border-amber-600 transition-colors">
+          <div
+            className={`rounded-lg p-6 border transition-colors ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-orange-500 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-neutral-400 text-sm font-medium uppercase tracking-wide">
+              <h3
+                className={`text-sm font-medium uppercase tracking-wide ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Pending Vehicles
               </h3>
-              <div className="w-12 h-12 bg-amber-600/10 rounded-lg flex items-center justify-center">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? "bg-amber-600/10" : "bg-orange-100"}`}
+              >
                 <svg
-                  className="w-6 h-6 text-amber-500"
+                  className={`w-6 h-6 ${isDark ? "text-amber-500" : "text-orange-600"}`}
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -164,22 +222,32 @@ export default function AdminDashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-4xl font-bold text-white mb-2">
+            <p
+              className={`text-4xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {stats?.pendingVehicles || 0}
             </p>
-            <p className="text-neutral-500 text-sm">
+            <p
+              className={`text-sm ${isDark ? "text-neutral-500" : "text-gray-600"}`}
+            >
               Listings awaiting approval
             </p>
           </div>
 
-          <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700 hover:border-amber-600 transition-colors">
+          <div
+            className={`rounded-lg p-6 border transition-colors ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-green-500 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-neutral-400 text-sm font-medium uppercase tracking-wide">
+              <h3
+                className={`text-sm font-medium uppercase tracking-wide ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Total Users
               </h3>
-              <div className="w-12 h-12 bg-amber-600/10 rounded-lg flex items-center justify-center">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? "bg-amber-600/10" : "bg-green-100"}`}
+              >
                 <svg
-                  className="w-6 h-6 text-amber-500"
+                  className={`w-6 h-6 ${isDark ? "text-amber-500" : "text-green-600"}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -193,20 +261,28 @@ export default function AdminDashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-4xl font-bold text-white mb-2">
+            <p
+              className={`text-4xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {stats?.totalUsers || 0}
             </p>
-            <p className="text-neutral-500 text-sm">Registered on platform</p>
+            <p
+              className={`text-sm ${isDark ? "text-neutral-500" : "text-gray-600"}`}
+            >
+              Registered on platform
+            </p>
           </div>
         </div>
 
         {/* Pending Items Alert */}
         {stats && (stats.pendingKYC > 0 || stats.pendingVehicles > 0) && (
-          <div className="bg-amber-600/10 border border-amber-600/30 rounded-lg p-6 mb-8">
+          <div
+            className={`border rounded-lg p-6 mb-8 ${isDark ? "bg-amber-600/10 border-amber-600/30" : "bg-amber-50 border-amber-200"}`}
+          >
             <div className="flex items-start gap-4">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-amber-500"
+                  className={`h-6 w-6 ${isDark ? "text-amber-500" : "text-amber-600"}`}
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -218,20 +294,28 @@ export default function AdminDashboard() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-amber-500 font-semibold mb-1">
+                <h3
+                  className={`font-semibold mb-1 ${isDark ? "text-amber-500" : "text-amber-700"}`}
+                >
                   Action Required
                 </h3>
-                <p className="text-neutral-300 text-sm">
+                <p
+                  className={`text-sm ${isDark ? "text-neutral-300" : "text-amber-800"}`}
+                >
                   You have{" "}
                   {stats.pendingKYC > 0 && (
-                    <span className="font-medium text-white">
+                    <span
+                      className={`font-medium ${isDark ? "text-white" : "text-amber-900"}`}
+                    >
                       {stats.pendingKYC} pending KYC submission
                       {stats.pendingKYC > 1 ? "s" : ""}
                     </span>
                   )}
                   {stats.pendingKYC > 0 && stats.pendingVehicles > 0 && " and "}
                   {stats.pendingVehicles > 0 && (
-                    <span className="font-medium text-white">
+                    <span
+                      className={`font-medium ${isDark ? "text-white" : "text-amber-900"}`}
+                    >
                       {stats.pendingVehicles} pending vehicle
                       {stats.pendingVehicles > 1 ? "s" : ""}
                     </span>
@@ -247,7 +331,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link
             href="/admin/kyc"
-            className="group relative bg-neutral-800 rounded-lg overflow-hidden border border-neutral-700 hover:border-amber-600 transition-all duration-300"
+            className={`group relative rounded-lg overflow-hidden border transition-all duration-300 ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-blue-500 shadow-sm hover:shadow-md"}`}
           >
             <div
               className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity"
@@ -258,17 +342,27 @@ export default function AdminDashboard() {
             />
             <div className="relative p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-serif text-white">KYC Review</h3>
+                <h3
+                  className={`text-xl font-serif ${isDark ? "text-white" : "text-gray-900"}`}
+                >
+                  KYC Review
+                </h3>
                 {stats && stats.pendingKYC > 0 && (
-                  <span className="bg-amber-600 text-neutral-900 text-xs font-bold px-3 py-1 rounded-full">
+                  <span
+                    className={`text-xs font-bold px-3 py-1 rounded-full ${isDark ? "bg-amber-600 text-neutral-900" : "bg-blue-600 text-white"}`}
+                  >
                     {stats.pendingKYC}
                   </span>
                 )}
               </div>
-              <p className="text-neutral-400 mb-6">
+              <p
+                className={`mb-6 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Review and approve pending KYC submissions from users.
               </p>
-              <div className="flex items-center text-amber-500 font-medium group-hover:text-amber-400 transition-colors">
+              <div
+                className={`flex items-center font-medium transition-colors ${isDark ? "text-amber-500 group-hover:text-amber-400" : "text-blue-600 group-hover:text-blue-700"}`}
+              >
                 Go to KYC Review
                 <svg
                   className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
@@ -289,7 +383,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/admin/vehicles"
-            className="group relative bg-neutral-800 rounded-lg overflow-hidden border border-neutral-700 hover:border-amber-600 transition-all duration-300"
+            className={`group relative rounded-lg overflow-hidden border transition-all duration-300 ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-orange-500 shadow-sm hover:shadow-md"}`}
           >
             <div
               className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity"
@@ -300,19 +394,27 @@ export default function AdminDashboard() {
             />
             <div className="relative p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-serif text-white">
+                <h3
+                  className={`text-xl font-serif ${isDark ? "text-white" : "text-gray-900"}`}
+                >
                   Vehicle Review
                 </h3>
                 {stats && stats.pendingVehicles > 0 && (
-                  <span className="bg-amber-600 text-neutral-900 text-xs font-bold px-3 py-1 rounded-full">
+                  <span
+                    className={`text-xs font-bold px-3 py-1 rounded-full ${isDark ? "bg-amber-600 text-neutral-900" : "bg-orange-600 text-white"}`}
+                  >
                     {stats.pendingVehicles}
                   </span>
                 )}
               </div>
-              <p className="text-neutral-400 mb-6">
+              <p
+                className={`mb-6 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Review vehicle listings and confirm payments.
               </p>
-              <div className="flex items-center text-amber-500 font-medium group-hover:text-amber-400 transition-colors">
+              <div
+                className={`flex items-center font-medium transition-colors ${isDark ? "text-amber-500 group-hover:text-amber-400" : "text-orange-600 group-hover:text-orange-700"}`}
+              >
                 Go to Vehicle Review
                 <svg
                   className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
@@ -333,7 +435,7 @@ export default function AdminDashboard() {
 
           <Link
             href="/admin/users"
-            className="group relative bg-neutral-800 rounded-lg overflow-hidden border border-neutral-700 hover:border-amber-600 transition-all duration-300"
+            className={`group relative rounded-lg overflow-hidden border transition-all duration-300 ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-green-500 shadow-sm hover:shadow-md"}`}
           >
             <div
               className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity"
@@ -344,14 +446,20 @@ export default function AdminDashboard() {
             />
             <div className="relative p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-serif text-white">
+                <h3
+                  className={`text-xl font-serif ${isDark ? "text-white" : "text-gray-900"}`}
+                >
                   User Management
                 </h3>
               </div>
-              <p className="text-neutral-400 mb-6">
+              <p
+                className={`mb-6 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 View and manage all registered users on the platform.
               </p>
-              <div className="flex items-center text-amber-500 font-medium group-hover:text-amber-400 transition-colors">
+              <div
+                className={`flex items-center font-medium transition-colors ${isDark ? "text-amber-500 group-hover:text-amber-400" : "text-green-600 group-hover:text-green-700"}`}
+              >
                 Go to User Management
                 <svg
                   className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"

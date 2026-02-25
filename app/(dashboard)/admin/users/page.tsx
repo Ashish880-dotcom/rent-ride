@@ -5,6 +5,7 @@ import Link from "next/link";
 
 interface User {
   id: string;
+  name: string;
   email: string;
   role: string;
   kycStatus: string | null;
@@ -64,11 +65,13 @@ export default function AdminUsersPage() {
       filtered = filtered.filter((user) => user.kycStatus === kycStatusFilter);
     }
 
-    // Apply search query
+    // Apply search query (search by name or email)
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter((user) =>
-        user.email.toLowerCase().includes(query),
+      filtered = filtered.filter(
+        (user) =>
+          user.name.toLowerCase().includes(query) ||
+          user.email.toLowerCase().includes(query),
       );
     }
 
@@ -148,112 +151,169 @@ export default function AdminUsersPage() {
       <div className="mb-6">
         <Link
           href="/admin"
-          className="text-blue-600 hover:text-blue-800 font-medium"
+          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
         >
           ← Back to Admin Dashboard
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-6">User Management</h1>
+      <h1 className="text-3xl font-bold mb-6 text-blue-600 dark:text-white">
+        User Management
+      </h1>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-4">Filters</h2>
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow p-6 mb-6">
+        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          Filters
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Search */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Search by Email
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Search by Name or Email
             </label>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter email..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter name or email..."
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
 
           {/* Role Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Filter by Role
             </label>
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
             >
-              <option value="">All Roles</option>
-              <option value="ADMIN">Admin</option>
-              <option value="OWNER">Owner</option>
-              <option value="USER">User</option>
+              <option
+                value=""
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                All Roles
+              </option>
+              <option
+                value="ADMIN"
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                Admin
+              </option>
+              <option
+                value="OWNER"
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                Owner
+              </option>
+              <option
+                value="USER"
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                User
+              </option>
             </select>
           </div>
 
           {/* KYC Status Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Filter by KYC Status
             </label>
             <select
               value={kycStatusFilter}
               onChange={(e) => setKycStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
             >
-              <option value="">All Statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
+              <option
+                value=""
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                All Statuses
+              </option>
+              <option
+                value="PENDING"
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                Pending
+              </option>
+              <option
+                value="APPROVED"
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                Approved
+              </option>
+              <option
+                value="REJECTED"
+                className="bg-white dark:bg-neutral-700 text-gray-900 dark:text-white"
+              >
+                Rejected
+              </option>
             </select>
           </div>
         </div>
 
         {/* Results Count */}
-        <div className="mt-4 text-sm text-gray-600">
+        <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
           Showing {filteredUsers.length} of {users.length} users
         </div>
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow overflow-hidden">
         {filteredUsers.length === 0 ? (
-          <div className="p-8 text-center text-gray-600">
+          <div className="p-8 text-center text-gray-600 dark:text-gray-400">
             No users found matching the filters.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-neutral-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     KYC Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Vehicles
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Bookings
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Join Date
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-neutral-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-gray-50">
+                  <tr
+                    key={user.id}
+                    className="hover:bg-gray-50 dark:hover:bg-neutral-700"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {user.name}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {user.email}
                       </div>
-                      <div className="text-xs text-gray-500">{user.id}</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {user.id}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getRoleBadge(user.role)}
@@ -261,13 +321,13 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getKycStatusBadge(user.kycStatus)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       {user.vehicleCount}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       {user.bookingCount}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                       {formatDate(user.createdAt)}
                     </td>
                   </tr>

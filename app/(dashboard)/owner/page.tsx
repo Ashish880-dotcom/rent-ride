@@ -43,9 +43,21 @@ export default function OwnerDashboard() {
 
   if (loading) {
     return (
-      <div
-        className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
-      >
+      <div className="min-h-screen relative">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div
+          className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+          style={{ zIndex: -1 }}
+        />
+
         <div className="container mx-auto px-4 py-8">
           <h1
             className={`text-3xl font-bold mb-8 ${isDark ? "text-white" : "text-gray-900"}`}
@@ -64,18 +76,42 @@ export default function OwnerDashboard() {
 
   if (error) {
     return (
-      <div
-        className={`flex items-center justify-center min-h-screen ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
-      >
+      <div className="min-h-screen relative flex items-center justify-center">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div
+          className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+          style={{ zIndex: -1 }}
+        />
+
         <div className="text-red-600">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
-    >
+    <div className="min-h-screen relative">
+      {/* Background Image for Entire Page */}
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+          zIndex: -1,
+        }}
+      />
+      <div
+        className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+        style={{ zIndex: -1 }}
+      />
+
       {/* Hero Section with Background */}
       <div
         className={`relative border-b transition-colors duration-200 ${isDark ? "bg-neutral-950 border-neutral-800" : "bg-gradient-to-r from-green-600 to-green-800 border-green-700"}`}

@@ -74,7 +74,19 @@ export default function OwnerVehiclesPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen relative">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div className="fixed inset-0 bg-neutral-900/90" style={{ zIndex: -1 }} />
+        
+        <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>
       </div>
     );
@@ -82,14 +94,37 @@ export default function OwnerVehiclesPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen relative flex items-center justify-center">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div className="fixed inset-0 bg-neutral-900/90" style={{ zIndex: -1 }} />
+        
         <div className="text-red-600">Error: {error}</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen relative">
+      {/* Background Image */}
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+          zIndex: -1,
+        }}
+      />
+      <div className="fixed inset-0 bg-neutral-900/90" style={{ zIndex: -1 }} />
+      
+      <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Vehicles</h1>
         <Link
@@ -195,7 +230,7 @@ export default function OwnerVehiclesPage() {
                   {vehicle.location}
                 </p>
                 <p className="text-3xl font-bold text-amber-400 mb-4 drop-shadow-lg">
-                  ${vehicle.pricePerDay}/day
+                  Rs.{vehicle.pricePerDay}/day
                 </p>
 
                 {/* Action Buttons */}

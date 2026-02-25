@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTheme } from "@/core/contexts/ThemeContext";
 
 interface Vehicle {
   id: string;
@@ -22,6 +23,7 @@ interface Vehicle {
 type ViewMode = "pending" | "all";
 
 export function VehicleReviewPanel() {
+  const { isDark } = useTheme();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -186,7 +188,11 @@ export function VehicleReviewPanel() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-lg text-gray-600">Loading vehicles...</div>
+        <div
+          className={`text-lg ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+        >
+          Loading vehicles...
+        </div>
       </div>
     );
   }
@@ -202,7 +208,11 @@ export function VehicleReviewPanel() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Vehicle Management</h2>
+        <h2
+          className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+        >
+          Vehicle Management
+        </h2>
 
         {/* View Mode Toggle */}
         <div className="flex gap-2">
@@ -210,8 +220,8 @@ export function VehicleReviewPanel() {
             onClick={() => setViewMode("pending")}
             className={`px-4 py-2 rounded-md font-medium transition-colors ${
               viewMode === "pending"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? `${isDark ? "bg-amber-600 text-white" : "bg-blue-600 text-white"}`
+                : `${isDark ? "bg-neutral-700 text-neutral-300 hover:bg-neutral-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`
             }`}
           >
             Pending Review
@@ -220,8 +230,8 @@ export function VehicleReviewPanel() {
             onClick={() => setViewMode("all")}
             className={`px-4 py-2 rounded-md font-medium transition-colors ${
               viewMode === "all"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? `${isDark ? "bg-amber-600 text-white" : "bg-blue-600 text-white"}`
+                : `${isDark ? "bg-neutral-700 text-neutral-300 hover:bg-neutral-600" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`
             }`}
           >
             All Vehicles
@@ -230,8 +240,10 @@ export function VehicleReviewPanel() {
       </div>
 
       {vehicles.length === 0 && (
-        <div className="bg-white p-8 rounded-lg shadow-md text-center">
-          <p className="text-gray-600">
+        <div
+          className={`p-8 rounded-lg shadow-md text-center ${isDark ? "bg-neutral-800 border border-neutral-700" : "bg-white"}`}
+        >
+          <p className={isDark ? "text-neutral-400" : "text-gray-600"}>
             {viewMode === "pending"
               ? "No vehicles pending review or awaiting payment confirmation."
               : "No vehicles found in the system."}
@@ -243,7 +255,7 @@ export function VehicleReviewPanel() {
         {vehicles.map((vehicle, index) => (
           <div
             key={`${vehicle.id}-${index}`}
-            className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
+            className={`p-6 rounded-lg shadow-md border ${isDark ? "bg-neutral-800 border-neutral-700" : "bg-white border-gray-200"}`}
           >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Vehicle Images */}
@@ -275,10 +287,14 @@ export function VehicleReviewPanel() {
               <div className="lg:col-span-2">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-bold">
+                    <h3
+                      className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}
+                    >
                       {vehicle.make} {vehicle.model}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p
+                      className={`text-sm ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                    >
                       Owner: {vehicle.owner.email}
                     </p>
                   </div>
@@ -297,22 +313,50 @@ export function VehicleReviewPanel() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="text-sm text-gray-600">Year</p>
-                    <p className="font-medium">{vehicle.year}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Price per Day</p>
-                    <p className="font-medium text-blue-600">
-                      ${vehicle.pricePerDay.toFixed(2)}
+                    <p
+                      className={`text-sm ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                    >
+                      Year
+                    </p>
+                    <p
+                      className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}
+                    >
+                      {vehicle.year}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Location</p>
-                    <p className="font-medium">{vehicle.location}</p>
+                    <p
+                      className={`text-sm ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                    >
+                      Price per Day
+                    </p>
+                    <p
+                      className={`font-medium ${isDark ? "text-amber-500" : "text-blue-600"}`}
+                    >
+                      Rs.{vehicle.pricePerDay.toFixed(2)}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Submitted</p>
-                    <p className="font-medium">
+                    <p
+                      className={`text-sm ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                    >
+                      Location
+                    </p>
+                    <p
+                      className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}
+                    >
+                      {vehicle.location}
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      className={`text-sm ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                    >
+                      Submitted
+                    </p>
+                    <p
+                      className={`font-medium ${isDark ? "text-white" : "text-gray-900"}`}
+                    >
                       {new Date(vehicle.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -320,8 +364,16 @@ export function VehicleReviewPanel() {
 
                 {vehicle.description && (
                   <div className="mb-4">
-                    <p className="text-sm text-gray-600 mb-1">Description</p>
-                    <p className="text-sm">{vehicle.description}</p>
+                    <p
+                      className={`text-sm mb-1 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                    >
+                      Description
+                    </p>
+                    <p
+                      className={`text-sm ${isDark ? "text-neutral-300" : "text-gray-900"}`}
+                    >
+                      {vehicle.description}
+                    </p>
                   </div>
                 )}
 
@@ -332,7 +384,7 @@ export function VehicleReviewPanel() {
                       <button
                         onClick={() => handleAcceptForPayment(vehicle.id)}
                         disabled={actionLoading === vehicle.id}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        className={`px-4 py-2 rounded-md transition-colors disabled:cursor-not-allowed ${isDark ? "bg-amber-600 hover:bg-amber-700 text-white disabled:bg-neutral-700 disabled:text-neutral-500" : "bg-blue-600 hover:bg-blue-700 text-white disabled:bg-gray-400"}`}
                       >
                         {actionLoading === vehicle.id
                           ? "Processing..."
@@ -378,7 +430,7 @@ export function VehicleReviewPanel() {
                     <button
                       onClick={() => handleDelete(vehicle.id)}
                       disabled={actionLoading === vehicle.id}
-                      className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      className={`px-4 py-2 rounded-md transition-colors disabled:cursor-not-allowed ${isDark ? "bg-neutral-700 hover:bg-neutral-600 text-white disabled:bg-neutral-800 disabled:text-neutral-600" : "bg-gray-800 hover:bg-gray-900 text-white disabled:bg-gray-400"}`}
                     >
                       {actionLoading === vehicle.id
                         ? "Deleting..."

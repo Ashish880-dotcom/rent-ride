@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { Role } from "@/generated/prisma";
 
 interface RegisterData {
+  name: string;
   email: string;
   password: string;
   role: Role;
@@ -65,11 +66,16 @@ export class AuthService {
   }
 
   /**
-   * Registers a new user with email, password, and role
+   * Registers a new user with name, email, password, and role
    * @throws Error if validation fails or email already exists
    */
   static async register(data: RegisterData): Promise<RegisterResult> {
-    const { email, password, role } = data;
+    const { name, email, password, role } = data;
+
+    // Validate name
+    if (!name || name.trim().length < 2) {
+      throw new Error("Name must be at least 2 characters long");
+    }
 
     // Validate email format
     if (!this.validateEmail(email)) {
@@ -97,6 +103,7 @@ export class AuthService {
     // Create user
     const user = await prisma.user.create({
       data: {
+        name: name.trim(),
         email,
         passwordHash,
         role,

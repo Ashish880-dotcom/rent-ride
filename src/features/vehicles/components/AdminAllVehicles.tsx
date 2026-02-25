@@ -376,7 +376,7 @@ export function AdminAllVehicles() {
               <div className="mb-4">
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-bold text-amber-500">
-                    ${vehicle.pricePerDay}
+                    Rs.{vehicle.pricePerDay}
                   </span>
                   <span className="text-neutral-500 text-sm">/day</span>
                 </div>

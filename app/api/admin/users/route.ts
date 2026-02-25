@@ -43,6 +43,7 @@ export async function GET(request: Request) {
     // Transform the response to include statistics
     const usersWithStats = users.map((user) => ({
       id: user.id,
+      name: user.name,
       email: user.email,
       role: user.role,
       kycStatus: user.kyc?.status || null,
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
     console.error("Error fetching users:", error);
     return NextResponse.json(
       { error: "Failed to fetch users" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

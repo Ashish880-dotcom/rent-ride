@@ -615,7 +615,7 @@ export default function VehiclesPage() {
                       <div className="mb-4">
                         <div className="flex items-baseline gap-2">
                           <span className="text-2xl font-bold text-gray-900">
-                            ${vehicle.pricePerDay}
+                            Rs.{vehicle.pricePerDay}
                           </span>
                         </div>
                         <p className="text-xs text-gray-500">per day</p>

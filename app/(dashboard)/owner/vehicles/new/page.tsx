@@ -361,7 +361,7 @@ export default function AddVehiclePage() {
                 htmlFor="pricePerDay"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Price Per Day ($) *
+                Price Per Day (Rs.) *
               </label>
               <input
                 type="number"

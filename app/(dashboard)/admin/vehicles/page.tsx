@@ -12,7 +12,18 @@ export default function AdminVehiclesPage() {
   const [activeTab, setActiveTab] = useState<TabView>("all");
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen relative">
+      {/* Background Image */}
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+          zIndex: -1,
+        }}
+      />
+      <div className="fixed inset-0 bg-neutral-900/90" style={{ zIndex: -1 }} />
+
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
           <Link

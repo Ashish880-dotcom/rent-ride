@@ -94,10 +94,26 @@ export default function RenterDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen relative">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div
+          className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+          style={{ zIndex: -1 }}
+        />
+
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="animate-pulse">
-            <div className="h-10 bg-neutral-800 rounded w-1/4 mb-8"></div>
+            <div
+              className={`h-10 rounded w-1/4 mb-8 ${isDark ? "bg-neutral-800" : "bg-gray-200"}`}
+            ></div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {[1, 2, 3].map((i) => (
                 <div
@@ -114,7 +130,21 @@ export default function RenterDashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen relative flex items-center justify-center">
+        {/* Background Image */}
+        <div
+          className="fixed inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            zIndex: -1,
+          }}
+        />
+        <div
+          className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+          style={{ zIndex: -1 }}
+        />
+
         <div className="text-red-500">Error: {error}</div>
       </div>
     );
@@ -125,21 +155,25 @@ export default function RenterDashboard() {
   const completedRentals = bookings.filter((b) => b.status === "COMPLETED");
 
   return (
-    <div
-      className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
-    >
+    <div className="min-h-screen relative">
+      {/* Background Image for Entire Page */}
+      <div
+        className="fixed inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+          zIndex: -1,
+        }}
+      />
+      <div
+        className={`fixed inset-0 ${isDark ? "bg-neutral-900/90" : "bg-white/60"}`}
+        style={{ zIndex: -1 }}
+      />
+
       {/* Hero Section with Background */}
       <div
-        className={`relative border-b transition-colors duration-200 ${isDark ? "bg-neutral-950 border-neutral-800" : "bg-gradient-to-r from-blue-600 to-blue-800 border-blue-700"}`}
+        className={`relative border-b ${isDark ? "border-neutral-800" : "border-gray-200"}`}
       >
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage: isDark
-              ? "url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=1920')"
-              : "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
-          }}
-        />
         <div className="relative max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between">
             <div>
@@ -354,7 +388,7 @@ export default function RenterDashboard() {
                           {new Date(booking.endDate).toLocaleDateString()}
                         </p>
                         <p className="text-lg font-bold text-amber-500">
-                          ${booking.totalPrice}
+                          Rs.{booking.totalPrice}
                         </p>
                       </div>
                       <Link
@@ -462,7 +496,7 @@ export default function RenterDashboard() {
                           {new Date(booking.endDate).toLocaleDateString()}
                         </p>
                         <p className="text-lg font-bold text-white">
-                          ${booking.totalPrice}
+                          Rs.{booking.totalPrice}
                         </p>
                       </div>
                       <Link

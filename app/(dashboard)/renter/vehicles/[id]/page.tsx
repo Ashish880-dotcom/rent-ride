@@ -213,7 +213,7 @@ export default function VehicleDetailsPage() {
                 <div>
                   <p className="text-sm text-gray-600">Price per Day</p>
                   <p className="font-semibold text-blue-600 text-xl">
-                    ${vehicle.pricePerDay.toFixed(2)}
+                    Rs.{vehicle.pricePerDay.toFixed(2)}
                   </p>
                 </div>
                 <div>
@@ -256,7 +256,7 @@ export default function VehicleDetailsPage() {
               <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
                 <div className="mb-4">
                   <p className="text-3xl font-bold text-blue-600">
-                    ${vehicle.pricePerDay.toFixed(2)}
+                    Rs.{vehicle.pricePerDay.toFixed(2)}
                   </p>
                   <p className="text-gray-600">per day</p>
                 </div>
