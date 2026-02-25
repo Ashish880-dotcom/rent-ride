@@ -143,8 +143,11 @@ export const KYCSubmissionSchema = z.object({
     .transform(sanitizeText),
   documentImage: z
     .string()
-    .url("Document image must be a valid URL")
-    .max(500, "Document image URL must be less than 500 characters"),
+    .min(1, "Document image is required")
+    .refine(
+      (val) => val.startsWith("data:image/") || val.startsWith("http"),
+      "Document image must be a valid image (base64 or URL)",
+    ),
 });
 
 export const KYCApprovalSchema = z.object({
@@ -179,7 +182,14 @@ export const VehicleListingSchema = z.object({
     .optional()
     .transform((val) => (val ? sanitizeHtml(val) : undefined)),
   images: z
-    .array(z.string().url("Each image must be a valid URL"))
+    .array(
+      z
+        .string()
+        .refine(
+          (val) => val.startsWith("data:image/") || val.startsWith("http"),
+          "Each image must be a valid image (base64 or URL)",
+        ),
+    )
     .min(1, "At least one image is required")
     .max(10, "Maximum 10 images allowed"),
 });

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useTheme } from "@/core/contexts/ThemeContext";
 
 interface AdminStats {
   pendingKYC: number;
@@ -14,6 +15,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     async function fetchStats() {
@@ -67,14 +69,19 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div
+      className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
+    >
       {/* Hero Section with Background */}
-      <div className="relative bg-neutral-950 border-b border-neutral-800">
+      <div
+        className={`relative border-b transition-colors duration-200 ${isDark ? "bg-neutral-950 border-neutral-800" : "bg-gradient-to-r from-purple-600 to-purple-800 border-purple-700"}`}
+      >
         <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
+            backgroundImage: isDark
+              ? "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')"
+              : "url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920')",
           }}
         />
         <div className="relative max-w-7xl mx-auto px-4 py-12">

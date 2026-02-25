@@ -28,7 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, isDark } = useTheme();
 
   const filteredNavItems = navItems.filter(
     (item) => !item.roles || item.roles.includes(userRole || ""),
@@ -43,8 +43,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <nav
-      className={`border-b shadow-sm ${
-        isAdminPanel
+      className={`border-b shadow-sm transition-colors duration-200 ${
+        isDark
           ? "bg-neutral-950 border-neutral-800"
           : "bg-white border-gray-200"
       }`}
@@ -59,10 +59,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Link
                 href="/"
                 className={`flex items-center gap-3 ${
-                  isAdminPanel ? "text-white" : "text-blue-600"
+                  isDark ? "text-white" : "text-blue-600"
                 }`}
               >
-                {isAdminPanel && (
+                {isDark && (
                   <div className="w-10 h-10 bg-amber-600 rounded-lg flex items-center justify-center">
                     <svg
                       className="w-6 h-6 text-neutral-900"
@@ -75,9 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
                 <span
                   className={`text-xl font-bold tracking-tight ${
-                    isAdminPanel
-                      ? "text-white"
-                      : "text-blue-600 hover:text-blue-700"
+                    isDark ? "text-white" : "text-blue-600 hover:text-blue-700"
                   }`}
                 >
                   RentRide
@@ -91,10 +89,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   href={item.href}
                   className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                     isActive(item.href)
-                      ? isAdminPanel
+                      ? isDark
                         ? "text-amber-500 bg-amber-600/10"
                         : "text-blue-600 bg-blue-50"
-                      : isAdminPanel
+                      : isDark
                         ? "text-neutral-300 hover:text-white hover:bg-neutral-800"
                         : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   }`}
@@ -112,7 +110,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-lg transition-colors ${
-                isAdminPanel
+                isDark
                   ? "text-neutral-300 hover:text-white hover:bg-neutral-800 border border-neutral-700 hover:border-amber-600"
                   : "text-gray-700 hover:text-blue-600 hover:bg-gray-100 border border-gray-300"
               }`}
@@ -156,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className={`flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                  isAdminPanel ? "focus:ring-amber-500" : "focus:ring-blue-500"
+                  isDark ? "focus:ring-amber-500" : "focus:ring-blue-500"
                 }`}
                 aria-expanded={isProfileOpen}
                 aria-haspopup="true"
@@ -164,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <div
                   className={`h-8 w-8 rounded-full flex items-center justify-center font-medium ${
-                    isAdminPanel
+                    isDark
                       ? "bg-amber-600 text-neutral-900"
                       : "bg-blue-600 text-white"
                   }`}
@@ -173,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
                 <svg
                   className={`ml-2 h-4 w-4 ${
-                    isAdminPanel ? "text-neutral-400" : "text-gray-500"
+                    isDark ? "text-neutral-400" : "text-gray-500"
                   }`}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
@@ -191,7 +189,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {isProfileOpen && (
                 <div
                   className={`origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg ring-1 ring-opacity-5 z-50 ${
-                    isAdminPanel
+                    isDark
                       ? "bg-neutral-800 ring-neutral-700"
                       : "bg-white ring-black"
                   }`}
@@ -199,19 +197,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="py-1" role="menu" aria-orientation="vertical">
                     <div
                       className={`px-4 py-2 border-b ${
-                        isAdminPanel ? "border-neutral-700" : "border-gray-200"
+                        isDark ? "border-neutral-700" : "border-gray-200"
                       }`}
                     >
                       <p
                         className={`text-sm font-medium ${
-                          isAdminPanel ? "text-white" : "text-gray-900"
+                          isDark ? "text-white" : "text-gray-900"
                         }`}
                       >
                         {userEmail}
                       </p>
                       <p
                         className={`text-xs mt-1 ${
-                          isAdminPanel ? "text-neutral-400" : "text-gray-500"
+                          isDark ? "text-neutral-400" : "text-gray-500"
                         }`}
                       >
                         Role: <span className="font-medium">{userRole}</span>
@@ -220,7 +218,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={handleSignOut}
                       className={`block w-full text-left px-4 py-2 text-sm ${
-                        isAdminPanel
+                        isDark
                           ? "text-neutral-300 hover:bg-neutral-700 hover:text-white"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
@@ -240,7 +238,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={toggleTheme}
               className={`p-2 rounded-lg transition-colors ${
-                isAdminPanel
+                isDark
                   ? "text-neutral-300 hover:text-white hover:bg-neutral-800"
                   : "text-gray-700 hover:text-blue-600 hover:bg-gray-100"
               }`}
@@ -280,7 +278,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`inline-flex items-center justify-center p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-inset ${
-                isAdminPanel
+                isDark
                   ? "text-neutral-300 hover:text-white hover:bg-neutral-800 focus:ring-amber-500"
                   : "text-gray-700 hover:text-blue-600 hover:bg-gray-100 focus:ring-blue-500"
               }`}
@@ -329,7 +327,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {isMenuOpen && (
         <div
           className={`sm:hidden border-t ${
-            isAdminPanel ? "border-neutral-800" : "border-gray-200"
+            isDark ? "border-neutral-800" : "border-gray-200"
           }`}
         >
           <div className="pt-2 pb-3 space-y-1">
@@ -339,10 +337,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 href={item.href}
                 className={`block pl-3 pr-4 py-2 text-base font-medium border-l-4 ${
                   isActive(item.href)
-                    ? isAdminPanel
+                    ? isDark
                       ? "text-amber-500 bg-amber-600/10 border-amber-600"
                       : "text-blue-600 bg-blue-50 border-blue-600"
-                    : isAdminPanel
+                    : isDark
                       ? "text-neutral-300 hover:text-white hover:bg-neutral-800 border-transparent"
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50 border-transparent"
                 }`}
@@ -355,20 +353,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div
             className={`pt-4 pb-3 border-t ${
-              isAdminPanel ? "border-neutral-800" : "border-gray-200"
+              isDark ? "border-neutral-800" : "border-gray-200"
             }`}
           >
             <div className="px-4">
               <p
                 className={`text-sm font-medium ${
-                  isAdminPanel ? "text-white" : "text-gray-900"
+                  isDark ? "text-white" : "text-gray-900"
                 }`}
               >
                 {userEmail}
               </p>
               <p
                 className={`text-xs mt-1 ${
-                  isAdminPanel ? "text-neutral-400" : "text-gray-500"
+                  isDark ? "text-neutral-400" : "text-gray-500"
                 }`}
               >
                 Role: {userRole}
@@ -378,7 +376,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={handleSignOut}
                 className={`block w-full text-left px-4 py-2 text-base font-medium ${
-                  isAdminPanel
+                  isDark
                     ? "text-neutral-300 hover:text-white hover:bg-neutral-800"
                     : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                 }`}

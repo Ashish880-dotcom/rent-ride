@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { useTheme } from "@/core/contexts/ThemeContext";
 
 interface Booking {
   id: string;
@@ -31,6 +32,7 @@ export default function RenterDashboard() {
   const [stats, setStats] = useState<RenterStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { isDark } = useTheme();
 
   useEffect(() => {
     fetchBookings();
@@ -123,29 +125,42 @@ export default function RenterDashboard() {
   const completedRentals = bookings.filter((b) => b.status === "COMPLETED");
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div
+      className={`min-h-screen transition-colors duration-200 ${isDark ? "bg-neutral-900" : "bg-gray-50"}`}
+    >
       {/* Hero Section with Background */}
-      <div className="relative bg-neutral-950 border-b border-neutral-800">
+      <div
+        className={`relative border-b transition-colors duration-200 ${isDark ? "bg-neutral-950 border-neutral-800" : "bg-gradient-to-r from-blue-600 to-blue-800 border-blue-700"}`}
+      >
         <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=1920')",
+            backgroundImage: isDark
+              ? "url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=1920')"
+              : "url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920')",
           }}
         />
         <div className="relative max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl md:text-5xl font-serif text-white mb-3">
+              <h1
+                className={`text-4xl md:text-5xl font-serif mb-3 transition-colors duration-200 ${isDark ? "text-white" : "text-white"}`}
+              >
                 Renter Dashboard
               </h1>
-              <p className="text-neutral-400 text-lg">
+              <p
+                className={`text-lg transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-blue-100"}`}
+              >
                 Manage your vehicle rentals and bookings
               </p>
             </div>
             <button
               onClick={handleSignOut}
-              className="px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white font-medium rounded-lg border border-neutral-700 hover:border-amber-600 transition-all flex items-center gap-2"
+              className={`px-6 py-3 font-medium rounded-lg border transition-all flex items-center gap-2 ${
+                isDark
+                  ? "bg-neutral-800 hover:bg-neutral-700 text-white border-neutral-700 hover:border-amber-600"
+                  : "bg-white hover:bg-blue-50 text-blue-900 border-blue-200 hover:border-blue-300"
+              }`}
             >
               <svg
                 className="w-5 h-5"
@@ -169,14 +184,20 @@ export default function RenterDashboard() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700 hover:border-amber-600 transition-colors">
+          <div
+            className={`rounded-lg p-6 border transition-colors duration-200 ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-blue-500 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-neutral-400 text-sm font-medium uppercase tracking-wide">
+              <h3
+                className={`text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Active Rentals
               </h3>
-              <div className="w-12 h-12 bg-amber-600/10 rounded-lg flex items-center justify-center">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? "bg-amber-600/10" : "bg-green-100"}`}
+              >
                 <svg
-                  className="w-6 h-6 text-amber-500"
+                  className={`w-6 h-6 ${isDark ? "text-amber-500" : "text-green-600"}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -190,20 +211,32 @@ export default function RenterDashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-4xl font-bold text-white mb-2">
+            <p
+              className={`text-4xl font-bold mb-2 transition-colors duration-200 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {stats?.activeBookings || 0}
             </p>
-            <p className="text-neutral-500 text-sm">Currently renting</p>
+            <p
+              className={`text-sm transition-colors duration-200 ${isDark ? "text-neutral-500" : "text-gray-600"}`}
+            >
+              Currently renting
+            </p>
           </div>
 
-          <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700 hover:border-amber-600 transition-colors">
+          <div
+            className={`rounded-lg p-6 border transition-colors duration-200 ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-blue-500 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-neutral-400 text-sm font-medium uppercase tracking-wide">
+              <h3
+                className={`text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Pending Approval
               </h3>
-              <div className="w-12 h-12 bg-amber-600/10 rounded-lg flex items-center justify-center">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? "bg-amber-600/10" : "bg-yellow-100"}`}
+              >
                 <svg
-                  className="w-6 h-6 text-amber-500"
+                  className={`w-6 h-6 ${isDark ? "text-amber-500" : "text-yellow-600"}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -244,10 +277,16 @@ export default function RenterDashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-4xl font-bold text-white mb-2">
+            <p
+              className={`text-4xl font-bold mb-2 transition-colors duration-200 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {stats?.completedBookings || 0}
             </p>
-            <p className="text-neutral-500 text-sm">Past rentals</p>
+            <p
+              className={`text-sm transition-colors duration-200 ${isDark ? "text-neutral-500" : "text-gray-600"}`}
+            >
+              Past rentals
+            </p>
           </div>
         </div>
 

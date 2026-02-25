@@ -1,7 +1,7 @@
 import { auth } from "@/core/lib/auth";
 import { redirect } from "next/navigation";
-import { Navbar, NavItem } from "@/core/components/Navbar";
-import { ThemeProvider } from "@/core/contexts/ThemeContext";
+import { NavItem } from "@/core/components/Navbar";
+import { DashboardWrapper } from "@/core/components/DashboardWrapper";
 
 export default async function DashboardLayout({
   children,
@@ -33,6 +33,7 @@ export default async function DashboardLayout({
       return [
         { label: "Owner Dashboard", href: "/owner", roles: ["OWNER"] },
         { label: "Owner Profile", href: "/owner/profile", roles: ["OWNER"] },
+        { label: "KYC Verification", href: "/owner/kyc", roles: ["OWNER"] },
         {
           label: "Add Your Vehicles",
           href: "/owner/vehicles/new",
@@ -58,18 +59,13 @@ export default async function DashboardLayout({
   const isAdminPanel = role === "ADMIN";
 
   return (
-    <ThemeProvider>
-      <div
-        className={`min-h-screen ${isAdminPanel ? "bg-neutral-900" : "bg-gray-50"}`}
-      >
-        <Navbar
-          userRole={role}
-          userEmail={email}
-          navItems={navItems}
-          isAdminPanel={isAdminPanel}
-        />
-        <main>{children}</main>
-      </div>
-    </ThemeProvider>
+    <DashboardWrapper
+      userRole={role}
+      userEmail={email}
+      navItems={navItems}
+      isAdminPanel={isAdminPanel}
+    >
+      {children}
+    </DashboardWrapper>
   );
 }

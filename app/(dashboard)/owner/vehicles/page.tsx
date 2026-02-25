@@ -135,10 +135,10 @@ export default function OwnerVehiclesPage() {
           {vehicles.map((vehicle) => (
             <div
               key={vehicle.id}
-              className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden"
+              className="bg-gradient-to-br from-amber-900 via-yellow-800 to-amber-950 rounded-xl shadow-2xl hover:shadow-amber-900/50 transition-all overflow-hidden border-2 border-amber-600/30"
             >
               {/* Vehicle Image */}
-              <div className="h-48 bg-gray-200 relative">
+              <div className="h-48 bg-gray-900 relative">
                 {vehicle.images && vehicle.images.length > 0 ? (
                   <img
                     src={vehicle.images[0]}
@@ -146,9 +146,9 @@ export default function OwnerVehiclesPage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full">
+                  <div className="flex items-center justify-center h-full bg-gradient-to-br from-amber-900 to-yellow-900">
                     <svg
-                      className="h-16 w-16 text-gray-400"
+                      className="h-16 w-16 text-amber-400"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -168,13 +168,13 @@ export default function OwnerVehiclesPage() {
               </div>
 
               {/* Vehicle Details */}
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-1">
+              <div className="p-5 bg-gradient-to-b from-amber-800/90 to-amber-950/90 backdrop-blur-sm">
+                <h3 className="text-2xl font-black mb-3 text-black bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-200 px-3 py-2 rounded-lg tracking-wide shadow-lg">
                   {vehicle.year} {vehicle.make} {vehicle.model}
                 </h3>
-                <p className="text-gray-600 text-sm mb-2">
+                <p className="text-amber-200 text-sm mb-3 flex items-center font-medium">
                   <svg
-                    className="inline h-4 w-4 mr-1"
+                    className="inline h-4 w-4 mr-1.5 text-amber-400"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -194,7 +194,7 @@ export default function OwnerVehiclesPage() {
                   </svg>
                   {vehicle.location}
                 </p>
-                <p className="text-xl font-bold text-blue-600 mb-4">
+                <p className="text-3xl font-bold text-amber-400 mb-4 drop-shadow-lg">
                   ${vehicle.pricePerDay}/day
                 </p>
 
@@ -203,23 +203,23 @@ export default function OwnerVehiclesPage() {
                   {vehicle.status === "APPROVED" && (
                     <Link
                       href={`/owner/bookings?vehicleId=${vehicle.id}`}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center transition-colors"
+                      className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-sm font-bold py-3 px-3 rounded-lg text-center transition-all shadow-lg hover:shadow-green-500/50"
                     >
                       View Bookings
                     </Link>
                   )}
                   {vehicle.status === "PENDING" && (
-                    <div className="flex-1 bg-gray-100 text-gray-600 text-sm font-medium py-2 px-3 rounded text-center">
+                    <div className="flex-1 bg-gradient-to-r from-yellow-500 to-yellow-600 text-yellow-950 text-sm font-bold py-3 px-3 rounded-lg text-center border-2 border-yellow-400 shadow-lg">
                       Under Review
                     </div>
                   )}
                   {vehicle.status === "AWAITING_PAYMENT" && (
-                    <div className="flex-1 bg-blue-100 text-blue-600 text-sm font-medium py-2 px-3 rounded text-center">
+                    <div className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold py-3 px-3 rounded-lg text-center border-2 border-blue-400 shadow-lg">
                       Payment Pending
                     </div>
                   )}
                   {vehicle.status === "REJECTED" && (
-                    <div className="flex-1 bg-red-100 text-red-600 text-sm font-medium py-2 px-3 rounded text-center">
+                    <div className="flex-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold py-3 px-3 rounded-lg text-center border-2 border-red-400 shadow-lg">
                       Rejected
                     </div>
                   )}

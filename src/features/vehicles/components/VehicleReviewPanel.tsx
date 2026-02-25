@@ -50,13 +50,19 @@ export function VehicleReviewPanel() {
         const pendingData = await pendingResponse.json();
         const awaitingPaymentData = await awaitingPaymentResponse.json();
 
-        // Combine both lists
+        // Combine both lists and remove duplicates
         const allVehicles = [
           ...(pendingData.vehicles || []),
           ...(awaitingPaymentData.vehicles || []),
         ];
 
-        setVehicles(allVehicles);
+        // Remove duplicates by ID
+        const uniqueVehicles = allVehicles.filter(
+          (vehicle, index, self) =>
+            index === self.findIndex((v) => v.id === vehicle.id),
+        );
+
+        setVehicles(uniqueVehicles);
       } else {
         // Fetch all vehicles
         const response = await fetch("/api/vehicles");
@@ -234,9 +240,9 @@ export function VehicleReviewPanel() {
       )}
 
       <div className="space-y-4">
-        {vehicles.map((vehicle) => (
+        {vehicles.map((vehicle, index) => (
           <div
-            key={vehicle.id}
+            key={`${vehicle.id}-${index}`}
             className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
           >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
