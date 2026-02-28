@@ -178,12 +178,12 @@ export default function RenterDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1
-                className={`text-4xl md:text-5xl font-serif mb-3 transition-colors duration-200 ${isDark ? "text-white" : "text-white"}`}
+                className={`text-4xl md:text-5xl font-serif mb-3 transition-colors duration-200 ${isDark ? "text-white" : "text-gray-900"}`}
               >
                 Renter Dashboard
               </h1>
               <p
-                className={`text-lg transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-blue-100"}`}
+                className={`text-lg transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
               >
                 Manage your vehicle rentals and bookings
               </p>
@@ -284,20 +284,32 @@ export default function RenterDashboard() {
                 </svg>
               </div>
             </div>
-            <p className="text-4xl font-bold text-white mb-2">
+            <p
+              className={`text-4xl font-bold mb-2 transition-colors duration-200 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               {stats?.pendingBookings || 0}
             </p>
-            <p className="text-neutral-500 text-sm">Awaiting owner response</p>
+            <p
+              className={`text-sm transition-colors duration-200 ${isDark ? "text-neutral-500" : "text-gray-600"}`}
+            >
+              Awaiting owner response
+            </p>
           </div>
 
-          <div className="bg-neutral-800 rounded-lg p-6 border border-neutral-700 hover:border-amber-600 transition-colors">
+          <div
+            className={`rounded-lg p-6 border transition-colors duration-200 ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-blue-500 shadow-sm"}`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-neutral-400 text-sm font-medium uppercase tracking-wide">
+              <h3
+                className={`text-sm font-medium uppercase tracking-wide transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+              >
                 Completed
               </h3>
-              <div className="w-12 h-12 bg-amber-600/10 rounded-lg flex items-center justify-center">
+              <div
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${isDark ? "bg-amber-600/10" : "bg-blue-100"}`}
+              >
                 <svg
-                  className="w-6 h-6 text-amber-500"
+                  className={`w-6 h-6 ${isDark ? "text-amber-500" : "text-blue-600"}`}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -327,14 +339,16 @@ export default function RenterDashboard() {
         {/* Active Rentals Section */}
         {activeRentals.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-serif text-white mb-4">
+            <h2
+              className={`text-2xl font-serif mb-4 transition-colors duration-200 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               Active Rentals
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {activeRentals.map((booking) => (
                 <div
                   key={booking.id}
-                  className="bg-neutral-800 rounded-lg overflow-hidden border border-neutral-700 hover:border-amber-600 transition-all"
+                  className={`rounded-lg overflow-hidden border transition-all ${isDark ? "bg-neutral-800 border-neutral-700 hover:border-amber-600" : "bg-white border-gray-200 hover:border-blue-500 shadow-sm"}`}
                 >
                   <div className="flex">
                     <div className="w-32 h-32 bg-neutral-900 shrink-0">
@@ -374,26 +388,34 @@ export default function RenterDashboard() {
                           {booking.status}
                         </span>
                       </div>
-                      <div className="space-y-1 text-sm text-neutral-400 mb-3">
+                      <div
+                        className={`space-y-1 text-sm mb-3 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+                      >
                         <p>
-                          <span className="font-medium text-neutral-300">
+                          <span
+                            className={`font-medium ${isDark ? "text-neutral-300" : "text-gray-700"}`}
+                          >
                             From:
                           </span>{" "}
                           {new Date(booking.startDate).toLocaleDateString()}
                         </p>
                         <p>
-                          <span className="font-medium text-neutral-300">
+                          <span
+                            className={`font-medium ${isDark ? "text-neutral-300" : "text-gray-700"}`}
+                          >
                             To:
                           </span>{" "}
                           {new Date(booking.endDate).toLocaleDateString()}
                         </p>
-                        <p className="text-lg font-bold text-amber-500">
+                        <p
+                          className={`text-lg font-bold ${isDark ? "text-amber-500" : "text-blue-600"}`}
+                        >
                           Rs.{booking.totalPrice}
                         </p>
                       </div>
                       <Link
                         href={`/renter/bookings`}
-                        className="text-amber-500 hover:text-amber-400 text-sm font-medium"
+                        className={`text-sm font-medium ${isDark ? "text-amber-500 hover:text-amber-400" : "text-blue-600 hover:text-blue-700"}`}
                       >
                         View Details →
                       </Link>
@@ -604,9 +626,11 @@ export default function RenterDashboard() {
 
         {/* Empty State */}
         {bookings.length === 0 && (
-          <div className="bg-neutral-800 rounded-lg border border-neutral-700 p-12 text-center">
+          <div
+            className={`rounded-lg border p-12 text-center transition-colors duration-200 ${isDark ? "bg-neutral-800 border-neutral-700" : "bg-white border-gray-200 shadow-sm"}`}
+          >
             <svg
-              className="mx-auto h-16 w-16 text-neutral-600 mb-4"
+              className={`mx-auto h-16 w-16 mb-4 transition-colors duration-200 ${isDark ? "text-neutral-600" : "text-gray-400"}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -618,16 +642,20 @@ export default function RenterDashboard() {
                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
               />
             </svg>
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <h3
+              className={`text-lg font-semibold mb-2 transition-colors duration-200 ${isDark ? "text-white" : "text-gray-900"}`}
+            >
               No Bookings Yet
             </h3>
-            <p className="text-neutral-400 mb-6">
+            <p
+              className={`mb-6 transition-colors duration-200 ${isDark ? "text-neutral-400" : "text-gray-600"}`}
+            >
               Start exploring our vehicle collection and make your first
               booking!
             </p>
             <Link
               href="/renter/vehicles"
-              className="inline-flex items-center px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors"
+              className={`inline-flex items-center px-6 py-3 font-medium rounded-lg transition-colors ${isDark ? "bg-amber-600 hover:bg-amber-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"}`}
             >
               Browse Vehicles
               <svg

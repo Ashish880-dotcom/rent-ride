@@ -19,7 +19,7 @@ export default function AdminKYCPage() {
         <div className="mb-6">
           <Link
             href="/admin"
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            className="text-gray-800 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 font-medium"
           >
             ← Back to Admin Dashboard
           </Link>

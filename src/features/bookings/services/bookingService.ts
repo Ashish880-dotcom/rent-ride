@@ -153,6 +153,15 @@ export async function getRenterBookings(renterId: string) {
           comment: true,
         },
       },
+      payment: {
+        select: {
+          id: true,
+          paymentStatus: true,
+          paymentMethod: true,
+          amount: true,
+          paidAt: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -178,6 +187,15 @@ export async function getOwnerBookings(ownerId: string) {
           email: true,
         },
       },
+      payment: {
+        select: {
+          id: true,
+          paymentStatus: true,
+          paymentMethod: true,
+          amount: true,
+          paidAt: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -187,6 +205,7 @@ export async function getOwnerBookings(ownerId: string) {
 
 /**
  * Accept a booking request (update status to CONFIRMED)
+ * Requires payment to be completed before accepting
  */
 export async function acceptBooking(bookingId: string, ownerId: string) {
   // Verify the booking belongs to a vehicle owned by this user
@@ -194,6 +213,7 @@ export async function acceptBooking(bookingId: string, ownerId: string) {
     where: { id: bookingId },
     include: {
       vehicle: true,
+      payment: true,
     },
   });
 
@@ -207,6 +227,11 @@ export async function acceptBooking(bookingId: string, ownerId: string) {
 
   if (booking.status !== BookingStatus.PENDING) {
     throw new Error("Only pending bookings can be accepted");
+  }
+
+  // Check if payment is completed
+  if (!booking.payment || booking.payment.paymentStatus !== "COMPLETED") {
+    throw new Error("Payment must be completed before accepting the booking");
   }
 
   return await prisma.booking.update({

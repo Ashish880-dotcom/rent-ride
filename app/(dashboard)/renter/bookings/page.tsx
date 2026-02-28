@@ -18,6 +18,14 @@ interface Vehicle {
   };
 }
 
+interface Payment {
+  id: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  amount: number;
+  paidAt?: string;
+}
+
 interface Booking {
   id: string;
   vehicleId: string;
@@ -27,6 +35,7 @@ interface Booking {
   totalPrice: number;
   vehicle: Vehicle;
   createdAt: string;
+  payment?: Payment;
 }
 
 export default function RenterBookingsPage() {
@@ -72,6 +81,23 @@ export default function RenterBookingsPage() {
         return "bg-blue-600/20 text-blue-400 border-blue-600/30";
       case "REJECTED":
         return "bg-red-600/20 text-red-400 border-red-600/30";
+      default:
+        return "bg-neutral-600/20 text-neutral-400 border-neutral-600/30";
+    }
+  };
+
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case "COMPLETED":
+        return "bg-green-600/20 text-green-400 border-green-600/30";
+      case "PENDING":
+        return "bg-yellow-600/20 text-yellow-400 border-yellow-600/30";
+      case "PROCESSING":
+        return "bg-blue-600/20 text-blue-400 border-blue-600/30";
+      case "FAILED":
+        return "bg-red-600/20 text-red-400 border-red-600/30";
+      case "REFUNDED":
+        return "bg-purple-600/20 text-purple-400 border-purple-600/30";
       default:
         return "bg-neutral-600/20 text-neutral-400 border-neutral-600/30";
     }
@@ -556,14 +582,46 @@ export default function RenterBookingsPage() {
                         Rs.{booking.totalPrice}
                       </span>
                     </div>
+
+                    {/* Payment Status */}
+                    {booking.payment && (
+                      <div className="flex items-center justify-between pt-2">
+                        <span className="text-sm text-neutral-400">
+                          Payment
+                        </span>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getPaymentStatusColor(booking.payment.paymentStatus)}`}
+                        >
+                          {booking.payment.paymentStatus}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <Link
-                    href={`/renter/vehicles/${booking.vehicleId}`}
-                    className="block w-full text-center px-4 py-2 bg-neutral-900 hover:bg-neutral-700 text-white rounded-lg border border-neutral-700 hover:border-amber-600 transition-all"
-                  >
-                    View Vehicle Details
-                  </Link>
+                  {/* Action Buttons */}
+                  <div className="space-y-2">
+                    {/* Pay Now Button - Show if booking is pending and no payment or payment is pending/failed */}
+                    {booking.status === "PENDING" &&
+                      (!booking.payment ||
+                        booking.payment.paymentStatus === "PENDING" ||
+                        booking.payment.paymentStatus === "FAILED") && (
+                        <Link
+                          href={`/renter/bookings/${booking.id}/payment`}
+                          className="block w-full text-center px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-lg transition-colors"
+                        >
+                          {booking.payment?.paymentStatus === "FAILED"
+                            ? "Retry Payment"
+                            : "Pay Now"}
+                        </Link>
+                      )}
+
+                    <Link
+                      href={`/renter/vehicles/${booking.vehicleId}`}
+                      className="block w-full text-center px-4 py-2 bg-neutral-900 hover:bg-neutral-700 text-white rounded-lg border border-neutral-700 hover:border-amber-600 transition-all"
+                    >
+                      View Vehicle Details
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

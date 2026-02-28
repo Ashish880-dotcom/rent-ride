@@ -78,6 +78,14 @@ export const vehicleService = {
       where: {
         ownerId,
       },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },

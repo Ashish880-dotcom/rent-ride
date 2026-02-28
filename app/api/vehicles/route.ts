@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/core/lib/auth";
 import { vehicleService } from "@/features/vehicles/services/vehicleService";
 import { prisma } from "@/core/lib/prisma";
-import { VehicleListingSchema } from "@/core/utils/validation";
+import {
+  VehicleListingSchema,
+  VehicleFilterSchema,
+} from "@/core/utils/validation";
 import { z } from "zod";
 import { KYCStatus, Role, VehicleStatus } from "@/generated/prisma";
 import { withCache, CacheTTL, cache } from "@/core/utils/cache";
+import { logError, createErrorContext } from "@/core/utils/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -86,7 +90,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.error("Error creating vehicle:", error);
+    const context = createErrorContext(
+      "vehicle_creation",
+      false,
+      session?.user?.id,
+    );
+    logError(error, context);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -99,16 +108,33 @@ export async function GET(request: NextRequest) {
     const session = await auth();
     const { searchParams } = new URL(request.url);
 
-    const location = searchParams.get("location") || undefined;
-    const minPrice = searchParams.get("minPrice")
-      ? parseFloat(searchParams.get("minPrice")!)
-      : undefined;
-    const maxPrice = searchParams.get("maxPrice")
-      ? parseFloat(searchParams.get("maxPrice")!)
-      : undefined;
-    const status = searchParams.get("status") as VehicleStatus | undefined;
+    // Validate and sanitize query parameters
+    const filterParams = {
+      location: searchParams.get("location") || undefined,
+      minPrice: searchParams.get("minPrice") || undefined,
+      maxPrice: searchParams.get("maxPrice") || undefined,
+      status: searchParams.get("status") || undefined,
+    };
 
-    // If user is not authenticated or is a regular USER, return only APPROVED vehicles
+    const validationResult = VehicleFilterSchema.safeParse(filterParams);
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          error: "Invalid filter parameters",
+          details: validationResult.error.issues.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        },
+        { status: 400 },
+      );
+    }
+
+    const { location, minPrice, maxPrice, status } = validationResult.data;
+
+    // If user is not authenticated (guest) or is a regular USER (renter), return only APPROVED vehicles
+    // This allows public browsing while maintaining quality control
     if (!session?.user || session.user.role === Role.USER) {
       const cacheKey = `vehicles:approved:${location || "all"}:${minPrice || "0"}:${maxPrice || "inf"}`;
       const vehicles = await withCache(
@@ -160,7 +186,13 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ vehicles: [] });
   } catch (error) {
-    console.error("Error fetching vehicles:", error);
+    const session = await auth();
+    const context = createErrorContext(
+      "vehicle_list_fetch",
+      !session?.user,
+      session?.user?.id,
+    );
+    logError(error, context);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },

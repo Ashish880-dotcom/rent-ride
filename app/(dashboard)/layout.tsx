@@ -47,6 +47,7 @@ export default async function DashboardLayout({
     // USER/Renter role
     return [
       { label: "Dashboard", href: "/renter", roles: ["USER"] },
+      { label: "KYC Verification", href: "/renter/kyc", roles: ["USER"] },
       { label: "Browse Vehicles", href: "/renter/vehicles", roles: ["USER"] },
       { label: "My Bookings", href: "/renter/bookings", roles: ["USER"] },
       { label: "Profile", href: "/renter/profile", roles: ["USER"] },

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 interface User {
   id: string;
-  name: string;
+  name?: string;
   email: string;
   role: string;
   kycStatus: string | null;
@@ -70,7 +70,7 @@ export default function AdminUsersPage() {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (user) =>
-          user.name.toLowerCase().includes(query) ||
+          (user.name?.toLowerCase() || "").includes(query) ||
           user.email.toLowerCase().includes(query),
       );
     }
@@ -304,7 +304,7 @@ export default function AdminUsersPage() {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
-                        {user.name}
+                        {user.name || "N/A"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

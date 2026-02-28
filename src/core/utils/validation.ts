@@ -198,14 +198,37 @@ export const VehicleListingSchema = z.object({
     .max(10, "Maximum 10 images allowed"),
 });
 
-export const VehicleFilterSchema = z.object({
-  status: VehicleStatusSchema.optional(),
-  location: z.string().optional(),
-  minPrice: z.coerce.number().positive().optional(),
-  maxPrice: z.coerce.number().positive().optional(),
-  make: z.string().optional(),
-  model: z.string().optional(),
-});
+export const VehicleFilterSchema = z
+  .object({
+    status: VehicleStatusSchema.optional(),
+    location: z
+      .string()
+      .max(100, "Location must be less than 100 characters")
+      .optional()
+      .transform((val) => (val ? sanitizeText(val) : undefined)),
+    minPrice: z.coerce
+      .number()
+      .min(0, "Minimum price must be 0 or greater")
+      .optional(),
+    maxPrice: z.coerce
+      .number()
+      .min(0, "Maximum price must be 0 or greater")
+      .optional(),
+    make: z.string().optional(),
+    model: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.minPrice !== undefined && data.maxPrice !== undefined) {
+        return data.minPrice <= data.maxPrice;
+      }
+      return true;
+    },
+    {
+      message: "Minimum price cannot exceed maximum price",
+      path: ["minPrice"],
+    },
+  );
 
 export const VehicleIdSchema = z.object({
   id: z.string().cuid("Invalid vehicle ID format"),

@@ -37,6 +37,22 @@ enum BookingStatus {
   COMPLETED
 }
 
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  ESEWA
+  KHALTI
+  BANK_TRANSFER
+}
+
 // Models
 model User {
   id            String    @id @default(cuid())
@@ -118,11 +134,34 @@ model Booking {
   updatedAt     DateTime      @updatedAt
 
   feedback      Feedback?
+  payment       Payment?
 
   @@index([status])
   @@index([renterId])
   @@index([vehicleId])
   @@index([startDate, endDate])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  bookingId         String        @unique
+  booking           Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  amount            Float
+  paymentMethod     PaymentMethod
+  paymentStatus     PaymentStatus @default(PENDING)
+  
+  transactionId     String?       // External payment gateway transaction ID
+  paymentGateway    String?       // e.g., "stripe", "esewa", "khalti"
+  paymentDetails    String?       // JSON string for additional payment info
+  
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([paymentStatus])
+  @@index([bookingId])
+  @@index([transactionId])
 }
 
 model Feedback {

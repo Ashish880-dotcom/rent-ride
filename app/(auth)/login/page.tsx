@@ -3,7 +3,11 @@ import { LoginForm } from "@/features/authentication/components/LoginForm";
 import { auth } from "@/core/lib/auth";
 import { redirect } from "next/navigation";
 
-export default async function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<{ returnUrl?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   // Check if user is already authenticated
   const session = await auth();
 
@@ -18,6 +22,9 @@ export default async function LoginPage() {
       redirect("/renter");
     }
   }
+
+  const params = await searchParams;
+  const returnUrl = params.returnUrl;
 
   return (
     <div className="flex min-h-screen bg-neutral-900 relative overflow-hidden">
@@ -140,7 +147,7 @@ export default async function LoginPage() {
             </p>
           </div>
 
-          <LoginForm />
+          <LoginForm returnUrl={returnUrl} />
 
           <div className="mt-6 text-center">
             <p className="text-neutral-400 text-sm">

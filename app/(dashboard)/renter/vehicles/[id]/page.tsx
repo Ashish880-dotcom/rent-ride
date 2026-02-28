@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import FeedbackList from "@/features/vehicles/components/FeedbackList";
 import BookingRequestForm from "@/features/bookings/components/BookingRequestForm";
 import { Breadcrumb } from "@/core/components/Breadcrumb";
@@ -22,8 +22,14 @@ interface Vehicle {
   };
 }
 
+interface KYCStatus {
+  hasKYC: boolean;
+  status?: string;
+}
+
 export default function VehicleDetailsPage() {
   const params = useParams();
+  const router = useRouter();
   const vehicleId = params.id as string;
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
@@ -32,10 +38,31 @@ export default function VehicleDetailsPage() {
   const [error, setError] = useState<string>("");
   const [showBookingForm, setShowBookingForm] = useState<boolean>(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [kycStatus, setKycStatus] = useState<KYCStatus | null>(null);
+  const [showKYCWarning, setShowKYCWarning] = useState<boolean>(false);
 
   useEffect(() => {
     fetchVehicleDetails();
+    fetchKYCStatus();
   }, [vehicleId]);
+
+  const fetchKYCStatus = async () => {
+    try {
+      const response = await fetch("/api/kyc/status");
+      if (response.ok) {
+        const data = await response.json();
+        setKycStatus({
+          hasKYC: !!data.kyc,
+          status: data.kyc?.status,
+        });
+      } else {
+        setKycStatus({ hasKYC: false });
+      }
+    } catch (error) {
+      console.error("Error fetching KYC status:", error);
+      setKycStatus({ hasKYC: false });
+    }
+  };
 
   const fetchVehicleDetails = async () => {
     setLoading(true);
@@ -58,6 +85,30 @@ export default function VehicleDetailsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBookNowClick = () => {
+    // Check KYC status before allowing booking
+    if (!kycStatus?.hasKYC) {
+      // No KYC submitted - redirect to KYC page
+      router.push("/renter/kyc");
+      return;
+    }
+
+    if (kycStatus.status === "PENDING") {
+      // KYC pending - show warning
+      setShowKYCWarning(true);
+      return;
+    }
+
+    if (kycStatus.status === "REJECTED") {
+      // KYC rejected - redirect to KYC page
+      router.push("/renter/kyc");
+      return;
+    }
+
+    // KYC approved - show booking form
+    setShowBookingForm(true);
   };
 
   const handleBookingSuccess = () => {
@@ -246,7 +297,46 @@ export default function VehicleDetailsPage() {
 
           {/* Booking Section */}
           <div className="lg:col-span-1">
-            {showBookingForm ? (
+            {showKYCWarning ? (
+              <div className="bg-white rounded-lg shadow-md p-6 sticky top-6">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                  <div className="flex">
+                    <svg
+                      className="h-5 w-5 text-yellow-400 shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-yellow-800 mb-2">
+                        KYC Verification Pending
+                      </h3>
+                      <p className="text-sm text-yellow-700 mb-3">
+                        Waiting for KYC approval from the admin. You can browse
+                        vehicles but cannot book until your KYC is approved.
+                      </p>
+                      <button
+                        onClick={() => router.push("/renter/kyc")}
+                        className="text-sm font-medium text-yellow-800 hover:text-yellow-900 underline"
+                      >
+                        View KYC Status
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowKYCWarning(false)}
+                  className="w-full bg-gray-200 text-gray-700 py-3 px-4 rounded-md hover:bg-gray-300 transition-colors font-semibold"
+                >
+                  Close
+                </button>
+              </div>
+            ) : showBookingForm ? (
               <BookingRequestForm
                 vehicle={vehicle}
                 onSuccess={handleBookingSuccess}
@@ -262,11 +352,17 @@ export default function VehicleDetailsPage() {
                 </div>
 
                 <button
-                  onClick={() => setShowBookingForm(true)}
+                  onClick={handleBookNowClick}
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-semibold"
                 >
                   Book Now
                 </button>
+
+                {!kycStatus?.hasKYC && (
+                  <p className="mt-3 text-sm text-gray-600 text-center">
+                    KYC verification required to book
+                  </p>
+                )}
 
                 <div className="mt-6 pt-6 border-t border-gray-200">
                   <h3 className="font-semibold mb-3">Vehicle Owner</h3>

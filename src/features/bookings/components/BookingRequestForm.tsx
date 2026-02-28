@@ -126,10 +126,8 @@ export default function BookingRequestForm({
         throw new Error(data.error || "Failed to create booking");
       }
 
-      // Success
-      if (onSuccess) {
-        onSuccess();
-      }
+      // Redirect to payment page
+      window.location.href = `/renter/bookings/${data.booking.id}/payment`;
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

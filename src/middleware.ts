@@ -10,9 +10,22 @@ export async function middleware(request: NextRequest) {
   if (
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
-    pathname.startsWith("/api/auth/register")
+    pathname.startsWith("/api/auth/register") ||
+    pathname.startsWith("/vehicles") || // Public vehicle browsing pages
+    (pathname === "/api/vehicles" && request.method === "GET") || // Public vehicle list API
+    (pathname.match(/^\/api\/vehicles\/[^/]+$/) && request.method === "GET") // Public vehicle detail API
   ) {
     return NextResponse.next();
+  }
+
+  // For vehicle API mutations (POST, PATCH, DELETE), require authentication
+  if (pathname.startsWith("/api/vehicles") && request.method !== "GET") {
+    if (!token) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 },
+      );
+    }
   }
 
   // Authentication check - redirect to login if no session
@@ -110,6 +123,7 @@ export const config = {
     "/admin/:path*",
     "/owner/:path*",
     "/renter/:path*",
+    "/vehicles/:path*", // Include public vehicle pages in matcher
     "/api/kyc/:path*",
     "/api/vehicles/:path*",
     "/api/bookings/:path*",
